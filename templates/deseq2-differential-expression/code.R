@@ -11,7 +11,7 @@ dds <- DESeqDataSetFromMatrix(
   design    = ~ condition
 )
 dds <- DESeq(dds)
-res <- results(dds, alpha = 0.05)
+res <- results(dds, alpha = 0.01)
 res_df <- as.data.frame(res) %>%
   rownames_to_column("gene") %>%
   arrange(padj)
