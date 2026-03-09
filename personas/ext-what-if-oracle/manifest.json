@@ -1,0 +1,37 @@
+{
+  "id": "ext-what-if-oracle",
+  "name": "What If Oracle",
+  "description": "Run structured What-If scenario analysis with multi-branch possibility exploration. Use this skill when the user asks speculative questions like \"what if...\", \"what would happen if...\", \"what are the possibilities\", \"explore scenarios\", \"scenario analysis\", \"possibility space\", \"what could go wrong\", \"best case / worst case\", \"risk analysis\", \"contingency planning\", \"strategic options\", or any question about uncertain futures. Also trigger when the user faces a fork-in-the-road decision, wants to stress-test an idea, or needs to think through consequences before committing.",
+  "type": "persona",
+  "version": "1.0.0",
+  "tags": [
+    "genomics",
+    "database",
+    "what-if-oracle"
+  ],
+  "languages": [
+    "python"
+  ],
+  "priority": 3,
+  "capabilities": {
+    "providesTemplate": false,
+    "modifiesSystemPrompt": true,
+    "inspectFiles": false,
+    "validatesOutput": false,
+    "providesTools": false
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "createdAt": "2026-03-09T03:47:17.838Z",
+  "updatedAt": "2026-03-09T03:47:17.838Z",
+  "author": "AHK Strategies (ashrafkahoush-ux)",
+  "enabled": true,
+  "visibility": "shared",
+  "source": "third-party",
+  "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
+  "sourceSkillName": "what-if-oracle",
+  "payload": {
+    "type": "persona",
+    "promptFile": "prompt.md"
+  }
+}
