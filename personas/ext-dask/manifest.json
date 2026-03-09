@@ -1,0 +1,38 @@
+{
+  "id": "ext-dask",
+  "name": "Dask",
+  "description": "Distributed computing for larger-than-RAM pandas/NumPy workflows. Use when you need to scale existing pandas/NumPy code beyond memory or across clusters. Best for parallel file processing, distributed ML, integration with existing pandas code. For out-of-core analytics on single machine use vaex; for in-memory speed use polars.",
+  "type": "persona",
+  "version": "1.0.0",
+  "tags": [
+    "data-analysis",
+    "mathematics",
+    "database",
+    "dask"
+  ],
+  "languages": [
+    "python"
+  ],
+  "priority": 3,
+  "capabilities": {
+    "providesTemplate": false,
+    "modifiesSystemPrompt": true,
+    "inspectFiles": false,
+    "validatesOutput": false,
+    "providesTools": false
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "createdAt": "2026-03-09T03:47:17.801Z",
+  "updatedAt": "2026-03-09T03:47:17.801Z",
+  "author": "K-Dense Inc.",
+  "enabled": true,
+  "visibility": "shared",
+  "source": "third-party",
+  "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
+  "sourceSkillName": "dask",
+  "payload": {
+    "type": "persona",
+    "promptFile": "prompt.md"
+  }
+}
