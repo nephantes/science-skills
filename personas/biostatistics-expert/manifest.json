@@ -26,7 +26,7 @@
   "visibility": "builtin",
   "source": "platform",
   "createdAt": "2026-03-09T19:44:05.718Z",
-  "updatedAt": "2026-03-09T20:14:36.440Z",
+  "updatedAt": "2026-03-09T20:14:45.174Z",
   "payload": {
     "type": "persona",
     "promptFile": "prompt.md"
