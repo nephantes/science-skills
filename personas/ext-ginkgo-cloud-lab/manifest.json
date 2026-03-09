@@ -17,21 +17,21 @@
   ],
   "priority": 3,
   "capabilities": {
-    "providesTemplate": false,
-    "modifiesSystemPrompt": true,
     "inspectFiles": false,
+    "providesTools": false,
     "validatesOutput": false,
-    "providesTools": false
+    "providesTemplate": false,
+    "modifiesSystemPrompt": true
   },
   "inputSchema": [],
   "outputSchema": [],
-  "createdAt": "2026-03-09T03:47:17.808Z",
-  "updatedAt": "2026-03-09T03:47:17.808Z",
   "enabled": true,
   "visibility": "shared",
   "source": "third-party",
   "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
   "sourceSkillName": "ginkgo-cloud-lab",
+  "createdAt": "2026-03-09T03:47:17.808Z",
+  "updatedAt": "2026-03-09T03:47:17.808Z",
   "payload": {
     "type": "persona",
     "promptFile": "prompt.md"

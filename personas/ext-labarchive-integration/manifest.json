@@ -14,22 +14,22 @@
   ],
   "priority": 3,
   "capabilities": {
-    "providesTemplate": false,
-    "modifiesSystemPrompt": true,
     "inspectFiles": false,
+    "providesTools": false,
     "validatesOutput": false,
-    "providesTools": false
+    "providesTemplate": false,
+    "modifiesSystemPrompt": true
   },
   "inputSchema": [],
   "outputSchema": [],
-  "createdAt": "2026-03-09T03:47:17.814Z",
-  "updatedAt": "2026-03-09T03:47:17.814Z",
   "author": "K-Dense Inc.",
   "enabled": true,
   "visibility": "shared",
   "source": "third-party",
   "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
   "sourceSkillName": "labarchive-integration",
+  "createdAt": "2026-03-09T03:47:17.814Z",
+  "updatedAt": "2026-03-09T03:47:17.814Z",
   "payload": {
     "type": "persona",
     "promptFile": "prompt.md"
