@@ -3,7 +3,7 @@
   "name": "DESeq2 Differential Expression",
   "description": "Standard RNA-seq differential expression workflow using DESeq2",
   "type": "template",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "tags": [
     "differential-expression",
     "rna-seq",
@@ -27,7 +27,7 @@
   "visibility": "builtin",
   "source": "platform",
   "createdAt": "2026-03-08T20:47:54.755Z",
-  "updatedAt": "2026-03-09T05:47:07.568Z",
+  "updatedAt": "2026-03-09T13:21:57.422Z",
   "payload": {
     "type": "template",
     "codeFile": "code.R",

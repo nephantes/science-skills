@@ -15,9 +15,9 @@ dds <- DESeqDataSetFromMatrix(
   design    = ~ condition
 )
 dds <- DESeq(dds)
-res <- results(dds, alpha = 0.05)
+res <- results(dds, alpha = 0.01)
 res_df <- as.data.frame(res) %>%
   rownames_to_column("gene") %>%
   arrange(padj)
 write.csv(res_df, "de_results.csv", row.names = FALSE)
-cat("Significant genes (padj < 0.05):", sum(res_df$padj < 0.05, na.rm = TRUE), "\n")
+cat("Significant genes (padj < 0.01):", sum(res_df$padj < 0.01, na.rm = TRUE), "\n")
