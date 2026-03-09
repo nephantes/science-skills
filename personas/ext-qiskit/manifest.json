@@ -1,0 +1,38 @@
+{
+  "id": "ext-qiskit",
+  "name": "Qiskit",
+  "description": "IBM quantum computing framework. Use when targeting IBM Quantum hardware, working with Qiskit Runtime for production workloads, or needing IBM optimization tools. Best for IBM hardware execution, quantum error mitigation, and enterprise quantum computing. For Google hardware use cirq; for gradient-based quantum ML use pennylane; for open quantum system simulations use qutip.",
+  "type": "persona",
+  "version": "1.0.0",
+  "tags": [
+    "visualization",
+    "chemistry",
+    "database",
+    "qiskit"
+  ],
+  "languages": [
+    "python"
+  ],
+  "priority": 3,
+  "capabilities": {
+    "providesTemplate": false,
+    "modifiesSystemPrompt": true,
+    "inspectFiles": false,
+    "validatesOutput": false,
+    "providesTools": false
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "createdAt": "2026-03-09T03:47:17.827Z",
+  "updatedAt": "2026-03-09T03:47:17.827Z",
+  "author": "K-Dense Inc.",
+  "enabled": true,
+  "visibility": "shared",
+  "source": "third-party",
+  "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
+  "sourceSkillName": "qiskit",
+  "payload": {
+    "type": "persona",
+    "promptFile": "prompt.md"
+  }
+}
