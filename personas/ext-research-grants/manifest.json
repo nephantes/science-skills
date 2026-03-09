@@ -17,11 +17,11 @@
   ],
   "priority": 3,
   "capabilities": {
-    "providesTemplate": false,
-    "modifiesSystemPrompt": true,
     "inspectFiles": false,
+    "providesTools": false,
     "validatesOutput": false,
-    "providesTools": false
+    "providesTemplate": false,
+    "modifiesSystemPrompt": true
   },
   "inputSchema": [],
   "outputSchema": [],
@@ -31,8 +31,8 @@
   "source": "third-party",
   "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
   "sourceSkillName": "research-grants",
-  "createdAt": "2026-03-09T04:17:47.723Z",
-  "updatedAt": "2026-03-09T04:17:47.723Z",
+  "createdAt": "2026-03-09T03:47:17.828Z",
+  "updatedAt": "2026-03-09T04:17:59.511Z",
   "payload": {
     "type": "persona",
     "promptFile": "prompt.md"
