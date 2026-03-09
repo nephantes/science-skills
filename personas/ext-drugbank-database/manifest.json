@@ -20,11 +20,11 @@
   ],
   "priority": 3,
   "capabilities": {
-    "inspectFiles": false,
-    "providesTools": false,
-    "validatesOutput": false,
     "providesTemplate": false,
-    "modifiesSystemPrompt": true
+    "modifiesSystemPrompt": true,
+    "inspectFiles": false,
+    "validatesOutput": false,
+    "providesTools": false
   },
   "inputSchema": [],
   "outputSchema": [],
@@ -34,8 +34,8 @@
   "source": "third-party",
   "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
   "sourceSkillName": "drugbank-database",
-  "createdAt": "2026-03-09T03:47:17.804Z",
-  "updatedAt": "2026-03-09T04:17:51.020Z",
+  "createdAt": "2026-03-09T04:27:35.570Z",
+  "updatedAt": "2026-03-09T04:27:35.570Z",
   "payload": {
     "type": "persona",
     "promptFile": "prompt.md"
