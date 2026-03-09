@@ -1,0 +1,43 @@
+{
+  "id": "ext-drugbank-database",
+  "name": "Drugbank Database",
+  "description": "Access and analyze comprehensive drug information from the DrugBank database including drug properties, interactions, targets, pathways, chemical structures, and pharmacology data. This skill should be used when working with pharmaceutical data, drug discovery research, pharmacology studies, drug-drug interaction analysis, target identification, chemical similarity searches, ADMET predictions, or any task requiring detailed drug and drug target information from DrugBank.",
+  "type": "persona",
+  "version": "1.0.0",
+  "tags": [
+    "bioinformatics",
+    "machine-learning",
+    "data-analysis",
+    "chemistry",
+    "clinical",
+    "writing",
+    "database",
+    "pathway-analysis",
+    "drugbank-database"
+  ],
+  "languages": [
+    "python"
+  ],
+  "priority": 3,
+  "capabilities": {
+    "providesTemplate": false,
+    "modifiesSystemPrompt": true,
+    "inspectFiles": false,
+    "validatesOutput": false,
+    "providesTools": false
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "createdAt": "2026-03-09T03:47:17.804Z",
+  "updatedAt": "2026-03-09T03:47:17.804Z",
+  "author": "K-Dense Inc.",
+  "enabled": true,
+  "visibility": "shared",
+  "source": "third-party",
+  "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
+  "sourceSkillName": "drugbank-database",
+  "payload": {
+    "type": "persona",
+    "promptFile": "prompt.md"
+  }
+}
