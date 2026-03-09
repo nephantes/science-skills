@@ -1,0 +1,39 @@
+{
+  "id": "ext-protocolsio-integration",
+  "name": "Protocolsio Integration",
+  "description": "Integration with protocols.io API for managing scientific protocols. This skill should be used when working with protocols.io to search, create, update, or publish protocols; manage protocol steps and materials; handle discussions and comments; organize workspaces; upload and manage files; or integrate protocols.io functionality into workflows. Applicable for protocol discovery, collaborative protocol development, experiment tracking, lab protocol management, and scientific documentation.",
+  "type": "persona",
+  "version": "1.0.0",
+  "tags": [
+    "genomics",
+    "writing",
+    "imaging",
+    "database",
+    "protocolsio-integration"
+  ],
+  "languages": [
+    "python"
+  ],
+  "priority": 3,
+  "capabilities": {
+    "providesTemplate": false,
+    "modifiesSystemPrompt": true,
+    "inspectFiles": false,
+    "validatesOutput": false,
+    "providesTools": false
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "createdAt": "2026-03-09T03:47:17.823Z",
+  "updatedAt": "2026-03-09T03:47:17.823Z",
+  "author": "K-Dense Inc.",
+  "enabled": true,
+  "visibility": "shared",
+  "source": "third-party",
+  "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
+  "sourceSkillName": "protocolsio-integration",
+  "payload": {
+    "type": "persona",
+    "promptFile": "prompt.md"
+  }
+}
