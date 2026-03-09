@@ -23,7 +23,7 @@
   "visibility": "builtin",
   "source": "platform",
   "createdAt": "2026-03-09T00:03:27.146Z",
-  "updatedAt": "2026-03-09T18:36:17.382Z",
+  "updatedAt": "2026-03-09T18:53:59.815Z",
   "payload": {
     "type": "validator",
     "moduleRef": "@builtin/format-detector"
