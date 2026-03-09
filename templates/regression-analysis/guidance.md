@@ -1,0 +1,11 @@
+When performing regression analysis:
+- For logistic regression: statsmodels.api.Logit or sklearn.linear_model.LogisticRegression
+- For ordinal logistic regression: statsmodels.miscmodels.ordinal_model.OrderedModel with distr='logit'
+- For spline regression: use R's splines::ns() via rpy2, or manually with scipy interpolate
+- For polynomial regression: sklearn.preprocessing.PolynomialFeatures + LinearRegression, or np.polyfit
+- Compare models using AIC (model.aic), BIC (model.bic), or R² (model.rsquared)
+- For ordinal outcomes (e.g., severity grades 1-5), use OrderedModel not regular logistic regression
+- Always report: coefficients, standard errors, p-values, confidence intervals
+- For clinical data: merge datasets on subject ID, handle missing data with dropna or imputation
+- Use pd.Categorical for ordinal variables to preserve order
+- Odds ratios = np.exp(coefficients) for logistic models

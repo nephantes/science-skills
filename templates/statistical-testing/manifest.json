@@ -1,16 +1,15 @@
 {
-  "id": "clipkit-trimming",
-  "name": "ClipKIT Alignment Trimming",
-  "description": "Trim multiple sequence alignments with ClipKIT and measure length reduction",
+  "id": "statistical-testing",
+  "name": "Statistical Testing",
+  "description": "Hypothesis testing: t-test, ANOVA, chi-square, Mann-Whitney, Cohen's d, Shapiro-Wilk, multiple testing correction",
   "type": "template",
   "version": "1.0.0",
   "tags": [
-    "phylogenetics",
-    "alignment",
-    "clipkit",
-    "trimming",
-    "sequence-analysis",
-    "genomics"
+    "statistics",
+    "hypothesis-testing",
+    "anova",
+    "chi-square",
+    "t-test"
   ],
   "languages": [
     "python"
@@ -28,7 +27,7 @@
   "enabled": true,
   "visibility": "builtin",
   "source": "platform",
-  "createdAt": "2026-03-09T16:00:25.818Z",
+  "createdAt": "2026-03-09T19:44:05.718Z",
   "updatedAt": "2026-03-09T19:44:05.718Z",
   "payload": {
     "type": "template",

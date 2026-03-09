@@ -1,0 +1,12 @@
+When performing statistical tests in Python:
+- Use scipy.stats for hypothesis tests: ttest_ind, ttest_rel, f_oneway, chi2_contingency, chisquare, mannwhitneyu, shapiro, kruskal
+- For Welch's t-test (unequal variances): ttest_ind(a, b, equal_var=False)
+- For Cohen's d: compute as (mean1 - mean2) / pooled_std
+- For chi-square goodness-of-fit: chisquare(observed, f_exp=expected)
+- For chi-square test of independence: chi2_contingency(contingency_table)
+- For multiple comparisons: use statsmodels.stats.multicomp (pairwise_tukeyhsd) or scipy with Bonferroni/BH correction
+- For Shapiro-Wilk normality test: shapiro(data) returns (statistic, p_value)
+- Always check assumptions: normality (Shapiro-Wilk), homoscedasticity (Levene's), independence
+- Report test statistic, degrees of freedom (where applicable), and p-value
+- Use Benjamini-Hochberg (statsmodels.stats.multitest.multipletests) for multiple testing correction
+- Round results appropriately (4 decimal places for test statistics, scientific notation for small p-values)

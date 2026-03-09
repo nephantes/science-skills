@@ -1,0 +1,12 @@
+When performing statistical tests in R:
+- For Dunnett's test (comparing treatments vs control): library(multcomp); glht(model, linfct = mcp(group = "Dunnett"))
+- For ANOVA: aov(value ~ group, data = df), then summary() for F-statistic and p-value
+- For Tukey HSD: TukeyHSD(aov_model)
+- For Welch's t-test: t.test(a, b, var.equal = FALSE)
+- For chi-square: chisq.test(table) or chisq.test(observed, p = expected_proportions)
+- For Shapiro-Wilk: shapiro.test(x) returns $statistic and $p.value
+- For natural spline regression: library(splines); lm(y ~ ns(x, df=3), data = df)
+- For polynomial regression: lm(y ~ poly(x, degree=2), data = df)
+- Use R² (summary(model)$r.squared) to compare model fits
+- Always check model diagnostics: residual plots, QQ plots
+- Report exact p-values and confidence intervals where possible

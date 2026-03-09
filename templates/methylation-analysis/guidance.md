@@ -1,0 +1,12 @@
+When performing methylation/epigenomics analysis:
+- CpG sites are typically stored as CSV with Chromosome, Pos (position), and MethylationPercentage columns
+- Common filters: hyper-methylated (>90%) or hypo-methylated (<10%)
+- CpG density = number of unique CpG positions per chromosome / chromosome length
+- For chromosomal distribution: merge CpG counts with chromosome length data
+- Chi-square goodness-of-fit test: test if CpG distribution is proportional to chromosome length
+  - Expected counts = (chromosome_length / total_genome_length) * total_CpGs
+  - Use scipy.stats.chisquare(observed, f_exp=expected)
+- When comparing species, ensure chromosome naming is consistent (e.g., "1", "Z", "W")
+- Convert chromosome columns to string before merging
+- Genome-wide average density = mean of per-chromosome densities
+- Report densities in scientific notation (e.g., 1.23e-06)
