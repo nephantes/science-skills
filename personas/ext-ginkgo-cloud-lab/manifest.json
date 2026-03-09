@@ -1,0 +1,39 @@
+{
+  "id": "ext-ginkgo-cloud-lab",
+  "name": "Ginkgo Cloud Lab",
+  "description": "Submit and manage protocols on Ginkgo Bioworks Cloud Lab (cloud.ginkgo.bio), a web-based interface for autonomous lab execution on Reconfigurable Automation Carts (RACs). Use when the user wants to run cell-free protein expression (validation or optimization), generate fluorescent pixel art, or interact with Ginkgo Cloud Lab services. Covers protocol selection, input preparation, pricing, and ordering workflows.",
+  "type": "persona",
+  "version": "1.0.0",
+  "tags": [
+    "genomics",
+    "clinical",
+    "proteomics",
+    "imaging",
+    "database",
+    "ginkgo-cloud-lab"
+  ],
+  "languages": [
+    "python"
+  ],
+  "priority": 3,
+  "capabilities": {
+    "providesTemplate": false,
+    "modifiesSystemPrompt": true,
+    "inspectFiles": false,
+    "validatesOutput": false,
+    "providesTools": false
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "createdAt": "2026-03-09T03:47:17.808Z",
+  "updatedAt": "2026-03-09T03:47:17.808Z",
+  "enabled": true,
+  "visibility": "shared",
+  "source": "third-party",
+  "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
+  "sourceSkillName": "ginkgo-cloud-lab",
+  "payload": {
+    "type": "persona",
+    "promptFile": "prompt.md"
+  }
+}
