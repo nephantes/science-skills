@@ -16,11 +16,11 @@
   ],
   "priority": 3,
   "capabilities": {
-    "providesTemplate": false,
-    "modifiesSystemPrompt": true,
     "inspectFiles": false,
+    "providesTools": false,
     "validatesOutput": false,
-    "providesTools": false
+    "providesTemplate": false,
+    "modifiesSystemPrompt": true
   },
   "inputSchema": [],
   "outputSchema": [],
@@ -30,8 +30,8 @@
   "source": "third-party",
   "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
   "sourceSkillName": "cobrapy",
-  "createdAt": "2026-03-09T04:27:35.562Z",
-  "updatedAt": "2026-03-09T04:27:35.562Z",
+  "createdAt": "2026-03-09T03:47:17.801Z",
+  "updatedAt": "2026-03-09T04:27:38.510Z",
   "payload": {
     "type": "persona",
     "promptFile": "prompt.md"
