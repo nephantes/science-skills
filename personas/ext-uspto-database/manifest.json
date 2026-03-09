@@ -15,11 +15,11 @@
   ],
   "priority": 3,
   "capabilities": {
-    "providesTemplate": false,
-    "modifiesSystemPrompt": true,
     "inspectFiles": false,
+    "providesTools": false,
     "validatesOutput": false,
-    "providesTools": false
+    "providesTemplate": false,
+    "modifiesSystemPrompt": true
   },
   "inputSchema": [],
   "outputSchema": [],
@@ -29,8 +29,8 @@
   "source": "third-party",
   "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
   "sourceSkillName": "uspto-database",
-  "createdAt": "2026-03-09T04:09:49.170Z",
-  "updatedAt": "2026-03-09T04:09:49.170Z",
+  "createdAt": "2026-03-09T03:47:17.838Z",
+  "updatedAt": "2026-03-09T04:10:04.903Z",
   "payload": {
     "type": "persona",
     "promptFile": "prompt.md"

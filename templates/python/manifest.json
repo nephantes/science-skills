@@ -10,18 +10,27 @@
   ],
   "priority": 0,
   "capabilities": {
-    "providesTemplate": true,
-    "modifiesSystemPrompt": false,
     "inspectFiles": false,
+    "providesTools": false,
     "validatesOutput": false,
-    "providesTools": false
+    "providesTemplate": true,
+    "modifiesSystemPrompt": false
   },
   "inputSchema": [],
   "outputSchema": [],
-  "createdAt": "2026-03-09T04:15:47.633Z",
-  "updatedAt": "2026-03-09T04:15:47.633Z",
+  "gitMeta": {
+    "sha": "f4c35c3510718559b3bd0ba48f4407fe09c90f4a",
+    "author": "ViaScience",
+    "branch": "main",
+    "message": "Add skill: Python v1.0.0",
+    "shortSha": "f4c35c",
+    "committedAt": "2026-03-09T04:15:47Z"
+  },
   "enabled": true,
   "visibility": "shared",
+  "source": "platform",
+  "createdAt": "2026-03-09T04:15:47.633Z",
+  "updatedAt": "2026-03-09T04:15:47.745Z",
   "payload": {
     "type": "template",
     "codeFile": "code.py"
