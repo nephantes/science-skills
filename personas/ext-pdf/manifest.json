@@ -1,0 +1,37 @@
+{
+  "id": "ext-pdf",
+  "name": "Pdf",
+  "description": "Use this skill whenever the user wants to do anything with PDF files. This includes reading or extracting text/tables from PDFs, combining or merging multiple PDFs into one, splitting PDFs apart, rotating pages, adding watermarks, creating new PDFs, filling PDF forms, encrypting/decrypting PDFs, extracting images, and OCR on scanned PDFs to make them searchable. If the user mentions a .pdf file or asks to produce one, use this skill.",
+  "type": "persona",
+  "version": "1.0.0",
+  "tags": [
+    "data-analysis",
+    "imaging",
+    "database",
+    "pdf"
+  ],
+  "languages": [
+    "python"
+  ],
+  "priority": 3,
+  "capabilities": {
+    "providesTemplate": false,
+    "modifiesSystemPrompt": true,
+    "inspectFiles": false,
+    "validatesOutput": false,
+    "providesTools": false
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "createdAt": "2026-03-09T03:47:17.821Z",
+  "updatedAt": "2026-03-09T03:47:17.821Z",
+  "enabled": true,
+  "visibility": "shared",
+  "source": "third-party",
+  "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
+  "sourceSkillName": "pdf",
+  "payload": {
+    "type": "persona",
+    "promptFile": "prompt.md"
+  }
+}
