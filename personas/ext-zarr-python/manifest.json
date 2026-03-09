@@ -1,0 +1,37 @@
+{
+  "id": "ext-zarr-python",
+  "name": "Zarr Python",
+  "description": "Chunked N-D arrays for cloud storage. Compressed arrays, parallel I/O, S3/GCS integration, NumPy/Dask/Xarray compatible, for large-scale scientific computing pipelines.",
+  "type": "persona",
+  "version": "1.0.0",
+  "tags": [
+    "data-analysis",
+    "writing",
+    "zarr-python"
+  ],
+  "languages": [
+    "python"
+  ],
+  "priority": 3,
+  "capabilities": {
+    "providesTemplate": false,
+    "modifiesSystemPrompt": true,
+    "inspectFiles": false,
+    "validatesOutput": false,
+    "providesTools": false
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "createdAt": "2026-03-09T03:47:17.839Z",
+  "updatedAt": "2026-03-09T03:47:17.839Z",
+  "author": "K-Dense Inc.",
+  "enabled": true,
+  "visibility": "shared",
+  "source": "third-party",
+  "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
+  "sourceSkillName": "zarr-python",
+  "payload": {
+    "type": "persona",
+    "promptFile": "prompt.md"
+  }
+}
