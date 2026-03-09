@@ -1,15 +1,17 @@
 {
-  "id": "numeric-guard",
-  "name": "Numeric Column Guard",
-  "description": "Detects non-numeric columns in uploaded data files and instructs the planner to drop them for numeric tasks",
+  "id": "fasta-detector",
+  "name": "FASTA File Detector",
+  "description": "Detects FASTA/FASTA alignment files and reports sequence counts and format",
   "type": "plugin",
   "version": "1.0.0",
   "tags": [
-    "data-cleaning",
-    "preprocessing"
+    "phylogenetics",
+    "sequence-analysis",
+    "data-inspection",
+    "genomics"
   ],
   "languages": [],
-  "priority": 25,
+  "priority": 18,
   "capabilities": {
     "inspectFiles": true,
     "providesTools": false,
@@ -22,10 +24,10 @@
   "enabled": true,
   "visibility": "builtin",
   "source": "platform",
-  "createdAt": "2026-03-08T20:47:54.759Z",
+  "createdAt": "2026-03-09T16:00:25.818Z",
   "updatedAt": "2026-03-09T16:00:25.818Z",
   "payload": {
     "type": "plugin",
-    "moduleRef": "@builtin/numeric-guard"
+    "moduleRef": "@builtin/fasta-detector"
   }
 }
