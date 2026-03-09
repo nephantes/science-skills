@@ -1,6 +1,10 @@
 library(ggplot2)
 
-expr <- read.csv("expression_matrix.csv", row.names = 1)
+expr_raw <- read.csv("expression_matrix.csv", check.names = FALSE)
+ids <- make.unique(as.character(expr_raw[[1]]), sep = "_")
+expr <- expr_raw[, -1, drop = FALSE]
+rownames(expr) <- ids
+
 meta <- read.csv("sample_metadata.csv")
 
 # Transpose: samples as rows, genes as columns
