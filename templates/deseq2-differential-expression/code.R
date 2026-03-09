@@ -16,4 +16,4 @@ res_df <- as.data.frame(res) %>%
   rownames_to_column("gene") %>%
   arrange(padj)
 write.csv(res_df, "de_results.csv", row.names = FALSE)
-cat("Significant genes (padj < 0.05):", sum(res_df$padj < 0.05, na.rm = TRUE), "\n")
+cat("Significant genes (padj < 0.05):", sum(res_df$padj < 0.01, na.rm = TRUE), "\n")
