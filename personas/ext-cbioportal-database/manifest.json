@@ -32,7 +32,7 @@
   "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
   "sourceSkillName": "cbioportal-database",
   "createdAt": "2026-03-09T03:47:17.798Z",
-  "updatedAt": "2026-03-09T04:27:37.755Z",
+  "updatedAt": "2026-03-09T20:03:02.328Z",
   "payload": {
     "type": "persona",
     "promptFile": "prompt.md"

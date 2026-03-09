@@ -30,7 +30,7 @@
   "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
   "sourceSkillName": "gtex-database",
   "createdAt": "2026-03-09T03:47:17.810Z",
-  "updatedAt": "2026-03-09T04:27:42.088Z",
+  "updatedAt": "2026-03-09T20:03:02.435Z",
   "payload": {
     "type": "persona",
     "promptFile": "prompt.md"

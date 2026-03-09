@@ -30,7 +30,7 @@
   "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
   "sourceSkillName": "pdb-database",
   "createdAt": "2026-03-09T03:47:17.821Z",
-  "updatedAt": "2026-03-09T04:27:45.618Z",
+  "updatedAt": "2026-03-09T20:03:02.519Z",
   "payload": {
     "type": "persona",
     "promptFile": "prompt.md"

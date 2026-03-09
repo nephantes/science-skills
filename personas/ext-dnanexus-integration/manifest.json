@@ -33,7 +33,7 @@
   "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
   "sourceSkillName": "dnanexus-integration",
   "createdAt": "2026-03-09T03:47:17.804Z",
-  "updatedAt": "2026-03-09T04:27:39.544Z",
+  "updatedAt": "2026-03-09T20:03:02.386Z",
   "payload": {
     "type": "persona",
     "promptFile": "prompt.md"

@@ -30,7 +30,7 @@
   "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
   "sourceSkillName": "infographics",
   "createdAt": "2026-03-09T03:47:17.813Z",
-  "updatedAt": "2026-03-09T04:27:42.847Z",
+  "updatedAt": "2026-03-09T20:03:02.452Z",
   "payload": {
     "type": "persona",
     "promptFile": "prompt.md"

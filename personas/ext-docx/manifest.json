@@ -30,7 +30,7 @@
   "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
   "sourceSkillName": "docx",
   "createdAt": "2026-03-09T03:47:17.804Z",
-  "updatedAt": "2026-03-09T04:27:39.654Z",
+  "updatedAt": "2026-03-09T20:03:02.388Z",
   "payload": {
     "type": "persona",
     "promptFile": "prompt.md"

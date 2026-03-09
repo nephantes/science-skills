@@ -29,7 +29,7 @@
   "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
   "sourceSkillName": "adaptyv",
   "createdAt": "2026-03-09T03:47:17.794Z",
-  "updatedAt": "2026-03-09T04:27:35.634Z",
+  "updatedAt": "2026-03-09T20:03:02.289Z",
   "payload": {
     "type": "persona",
     "promptFile": "prompt.md"

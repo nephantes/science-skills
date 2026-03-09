@@ -30,7 +30,7 @@
   "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
   "sourceSkillName": "fred-economic-data",
   "createdAt": "2026-03-09T03:47:17.806Z",
-  "updatedAt": "2026-03-09T04:27:40.766Z",
+  "updatedAt": "2026-03-09T20:03:02.410Z",
   "payload": {
     "type": "persona",
     "promptFile": "prompt.md"

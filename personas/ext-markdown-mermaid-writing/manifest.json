@@ -31,7 +31,7 @@
   "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
   "sourceSkillName": "markdown-mermaid-writing",
   "createdAt": "2026-03-09T03:47:17.815Z",
-  "updatedAt": "2026-03-09T04:27:43.593Z",
+  "updatedAt": "2026-03-09T20:03:02.477Z",
   "payload": {
     "type": "persona",
     "promptFile": "prompt.md"

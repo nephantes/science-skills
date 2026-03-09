@@ -33,7 +33,7 @@
   "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
   "sourceSkillName": "latchbio-integration",
   "createdAt": "2026-03-09T03:47:17.814Z",
-  "updatedAt": "2026-03-09T04:27:43.364Z",
+  "updatedAt": "2026-03-09T20:03:02.467Z",
   "payload": {
     "type": "persona",
     "promptFile": "prompt.md"

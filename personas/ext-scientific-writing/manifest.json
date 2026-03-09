@@ -33,7 +33,7 @@
   "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
   "sourceSkillName": "scientific-writing",
   "createdAt": "2026-03-09T03:47:17.832Z",
-  "updatedAt": "2026-03-09T04:27:49.025Z",
+  "updatedAt": "2026-03-09T20:03:02.616Z",
   "payload": {
     "type": "persona",
     "promptFile": "prompt.md"

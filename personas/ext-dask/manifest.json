@@ -30,7 +30,7 @@
   "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
   "sourceSkillName": "dask",
   "createdAt": "2026-03-09T03:47:17.801Z",
-  "updatedAt": "2026-03-09T04:27:38.746Z",
+  "updatedAt": "2026-03-09T20:03:02.367Z",
   "payload": {
     "type": "persona",
     "promptFile": "prompt.md"

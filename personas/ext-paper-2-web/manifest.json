@@ -32,7 +32,7 @@
   "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
   "sourceSkillName": "paper-2-web",
   "createdAt": "2026-03-09T03:47:17.820Z",
-  "updatedAt": "2026-03-09T04:27:45.388Z",
+  "updatedAt": "2026-03-09T20:03:02.512Z",
   "payload": {
     "type": "persona",
     "promptFile": "prompt.md"

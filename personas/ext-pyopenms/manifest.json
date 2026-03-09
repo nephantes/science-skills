@@ -30,7 +30,7 @@
   "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
   "sourceSkillName": "pyopenms",
   "createdAt": "2026-03-09T03:47:17.826Z",
-  "updatedAt": "2026-03-09T04:27:47.352Z",
+  "updatedAt": "2026-03-09T20:03:02.576Z",
   "payload": {
     "type": "persona",
     "promptFile": "prompt.md"

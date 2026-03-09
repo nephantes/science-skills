@@ -32,7 +32,7 @@
   "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
   "sourceSkillName": "pydicom",
   "createdAt": "2026-03-09T03:47:17.824Z",
-  "updatedAt": "2026-03-09T04:27:46.907Z",
+  "updatedAt": "2026-03-09T20:03:02.562Z",
   "payload": {
     "type": "persona",
     "promptFile": "prompt.md"

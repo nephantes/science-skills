@@ -34,7 +34,7 @@
   "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
   "sourceSkillName": "clinical-reports",
   "createdAt": "2026-03-09T03:47:17.800Z",
-  "updatedAt": "2026-03-09T04:27:38.220Z",
+  "updatedAt": "2026-03-09T20:03:02.348Z",
   "payload": {
     "type": "persona",
     "promptFile": "prompt.md"

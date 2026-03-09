@@ -33,7 +33,7 @@
   "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
   "sourceSkillName": "treatment-plans",
   "createdAt": "2026-03-09T03:47:17.837Z",
-  "updatedAt": "2026-03-09T04:27:50.569Z",
+  "updatedAt": "2026-03-09T20:03:02.655Z",
   "payload": {
     "type": "persona",
     "promptFile": "prompt.md"

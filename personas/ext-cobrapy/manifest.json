@@ -31,7 +31,7 @@
   "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
   "sourceSkillName": "cobrapy",
   "createdAt": "2026-03-09T03:47:17.801Z",
-  "updatedAt": "2026-03-09T04:27:38.510Z",
+  "updatedAt": "2026-03-09T20:03:02.360Z",
   "payload": {
     "type": "persona",
     "promptFile": "prompt.md"

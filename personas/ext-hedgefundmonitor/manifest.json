@@ -30,7 +30,7 @@
   "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
   "sourceSkillName": "hedgefundmonitor",
   "createdAt": "2026-03-09T03:47:17.811Z",
-  "updatedAt": "2026-03-09T04:27:42.307Z",
+  "updatedAt": "2026-03-09T20:03:02.439Z",
   "payload": {
     "type": "persona",
     "promptFile": "prompt.md"

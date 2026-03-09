@@ -32,7 +32,7 @@
   "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
   "sourceSkillName": "phylogenetics",
   "createdAt": "2026-03-09T03:47:17.822Z",
-  "updatedAt": "2026-03-09T04:27:46.139Z",
+  "updatedAt": "2026-03-09T20:03:02.535Z",
   "payload": {
     "type": "persona",
     "promptFile": "prompt.md"

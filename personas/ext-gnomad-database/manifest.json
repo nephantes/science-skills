@@ -32,7 +32,7 @@
   "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
   "sourceSkillName": "gnomad-database",
   "createdAt": "2026-03-09T03:47:17.809Z",
-  "updatedAt": "2026-03-09T04:27:41.846Z",
+  "updatedAt": "2026-03-09T20:03:02.430Z",
   "payload": {
     "type": "persona",
     "promptFile": "prompt.md"

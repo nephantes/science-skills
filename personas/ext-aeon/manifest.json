@@ -30,7 +30,7 @@
   "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
   "sourceSkillName": "aeon",
   "createdAt": "2026-03-09T03:47:17.795Z",
-  "updatedAt": "2026-03-09T04:27:35.976Z",
+  "updatedAt": "2026-03-09T20:03:02.292Z",
   "payload": {
     "type": "persona",
     "promptFile": "prompt.md"
