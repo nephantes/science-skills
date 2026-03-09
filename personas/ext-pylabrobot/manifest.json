@@ -1,0 +1,37 @@
+{
+  "id": "ext-pylabrobot",
+  "name": "Pylabrobot",
+  "description": "Vendor-agnostic lab automation framework. Use when controlling multiple equipment types (Hamilton, Tecan, Opentrons, plate readers, pumps) or needing unified programming across different vendors. Best for complex workflows, multi-vendor setups, simulation. For Opentrons-only protocols with official API, opentrons-integration may be simpler.",
+  "type": "persona",
+  "version": "1.0.0",
+  "tags": [
+    "writing",
+    "database",
+    "pylabrobot"
+  ],
+  "languages": [
+    "python"
+  ],
+  "priority": 3,
+  "capabilities": {
+    "providesTemplate": false,
+    "modifiesSystemPrompt": true,
+    "inspectFiles": false,
+    "validatesOutput": false,
+    "providesTools": false
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "createdAt": "2026-03-09T03:47:17.825Z",
+  "updatedAt": "2026-03-09T03:47:17.825Z",
+  "author": "K-Dense Inc.",
+  "enabled": true,
+  "visibility": "shared",
+  "source": "third-party",
+  "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
+  "sourceSkillName": "pylabrobot",
+  "payload": {
+    "type": "persona",
+    "promptFile": "prompt.md"
+  }
+}
