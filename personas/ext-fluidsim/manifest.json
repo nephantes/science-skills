@@ -1,0 +1,38 @@
+{
+  "id": "ext-fluidsim",
+  "name": "Fluidsim",
+  "description": "Framework for computational fluid dynamics simulations using Python. Use when running fluid dynamics simulations including Navier-Stokes equations (2D/3D), shallow water equations, stratified flows, or when analyzing turbulence, vortex dynamics, or geophysical flows. Provides pseudospectral methods with FFT, HPC support, and comprehensive output analysis.",
+  "type": "persona",
+  "version": "1.0.0",
+  "tags": [
+    "visualization",
+    "mathematics",
+    "database",
+    "fluidsim"
+  ],
+  "languages": [
+    "python"
+  ],
+  "priority": 3,
+  "capabilities": {
+    "providesTemplate": false,
+    "modifiesSystemPrompt": true,
+    "inspectFiles": false,
+    "validatesOutput": false,
+    "providesTools": false
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "createdAt": "2026-03-09T03:47:17.806Z",
+  "updatedAt": "2026-03-09T03:47:17.806Z",
+  "author": "K-Dense Inc.",
+  "enabled": true,
+  "visibility": "shared",
+  "source": "third-party",
+  "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
+  "sourceSkillName": "fluidsim",
+  "payload": {
+    "type": "persona",
+    "promptFile": "prompt.md"
+  }
+}
