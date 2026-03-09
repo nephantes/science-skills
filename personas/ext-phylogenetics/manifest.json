@@ -1,0 +1,40 @@
+{
+  "id": "ext-phylogenetics",
+  "name": "Phylogenetics",
+  "description": "Build and analyze phylogenetic trees using MAFFT (multiple alignment), IQ-TREE 2 (maximum likelihood), and FastTree (fast NJ/ML). Visualize with ETE3 or FigTree. For evolutionary analysis, microbial genomics, viral phylodynamics, protein family analysis, and molecular clock studies.",
+  "type": "persona",
+  "version": "1.0.0",
+  "tags": [
+    "genomics",
+    "bioinformatics",
+    "visualization",
+    "chemistry",
+    "proteomics",
+    "phylogenetics"
+  ],
+  "languages": [
+    "python"
+  ],
+  "priority": 3,
+  "capabilities": {
+    "providesTemplate": false,
+    "modifiesSystemPrompt": true,
+    "inspectFiles": false,
+    "validatesOutput": false,
+    "providesTools": false
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "createdAt": "2026-03-09T03:47:17.822Z",
+  "updatedAt": "2026-03-09T03:47:17.822Z",
+  "author": "Kuan-lin Huang",
+  "enabled": true,
+  "visibility": "shared",
+  "source": "third-party",
+  "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
+  "sourceSkillName": "phylogenetics",
+  "payload": {
+    "type": "persona",
+    "promptFile": "prompt.md"
+  }
+}
