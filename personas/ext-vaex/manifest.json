@@ -1,0 +1,39 @@
+{
+  "id": "ext-vaex",
+  "name": "Vaex",
+  "description": "Use this skill for processing and analyzing large tabular datasets (billions of rows) that exceed available RAM. Vaex excels at out-of-core DataFrame operations, lazy evaluation, fast aggregations, efficient visualization of big data, and machine learning on large datasets. Apply when users need to work with large CSV/HDF5/Arrow/Parquet files, perform fast statistics on massive datasets, create visualizations of big data, or build ML pipelines that do not fit in memory.",
+  "type": "persona",
+  "version": "1.0.0",
+  "tags": [
+    "statistics",
+    "machine-learning",
+    "data-analysis",
+    "visualization",
+    "vaex"
+  ],
+  "languages": [
+    "python"
+  ],
+  "priority": 3,
+  "capabilities": {
+    "providesTemplate": false,
+    "modifiesSystemPrompt": true,
+    "inspectFiles": false,
+    "validatesOutput": false,
+    "providesTools": false
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "createdAt": "2026-03-09T03:47:17.838Z",
+  "updatedAt": "2026-03-09T03:47:17.838Z",
+  "author": "K-Dense Inc.",
+  "enabled": true,
+  "visibility": "shared",
+  "source": "third-party",
+  "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
+  "sourceSkillName": "vaex",
+  "payload": {
+    "type": "persona",
+    "promptFile": "prompt.md"
+  }
+}
