@@ -1,0 +1,41 @@
+{
+  "id": "ext-metabolomics-workbench-database",
+  "name": "Metabolomics Workbench Database",
+  "description": "Access NIH Metabolomics Workbench via REST API (4,200+ studies). Query metabolites, RefMet nomenclature, MS/NMR data, m/z searches, study metadata, for metabolomics and biomarker discovery.",
+  "type": "persona",
+  "version": "1.0.0",
+  "tags": [
+    "genomics",
+    "machine-learning",
+    "chemistry",
+    "proteomics",
+    "imaging",
+    "database",
+    "metabolomics-workbench-database"
+  ],
+  "languages": [
+    "python"
+  ],
+  "priority": 3,
+  "capabilities": {
+    "providesTemplate": false,
+    "modifiesSystemPrompt": true,
+    "inspectFiles": false,
+    "validatesOutput": false,
+    "providesTools": false
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "createdAt": "2026-03-09T03:47:17.817Z",
+  "updatedAt": "2026-03-09T03:47:17.817Z",
+  "author": "K-Dense Inc.",
+  "enabled": true,
+  "visibility": "shared",
+  "source": "third-party",
+  "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
+  "sourceSkillName": "metabolomics-workbench-database",
+  "payload": {
+    "type": "persona",
+    "promptFile": "prompt.md"
+  }
+}
