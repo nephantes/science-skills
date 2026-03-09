@@ -1,0 +1,43 @@
+{
+  "id": "ext-hypothesis-generation",
+  "name": "Hypothesis Generation",
+  "description": "Structured hypothesis formulation from observations. Use when you have experimental observations or data and need to formulate testable hypotheses with predictions, propose mechanisms, and design experiments to test them. Follows scientific method framework. For open-ended ideation use scientific-brainstorming; for automated LLM-driven hypothesis testing on datasets use hypogenic.",
+  "type": "persona",
+  "version": "1.0.0",
+  "tags": [
+    "genomics",
+    "statistics",
+    "visualization",
+    "clinical",
+    "writing",
+    "imaging",
+    "database",
+    "pathway-analysis",
+    "hypothesis-generation"
+  ],
+  "languages": [
+    "python"
+  ],
+  "priority": 3,
+  "capabilities": {
+    "providesTemplate": false,
+    "modifiesSystemPrompt": true,
+    "inspectFiles": false,
+    "validatesOutput": false,
+    "providesTools": false
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "createdAt": "2026-03-09T03:47:17.812Z",
+  "updatedAt": "2026-03-09T03:47:17.812Z",
+  "author": "K-Dense Inc.",
+  "enabled": true,
+  "visibility": "shared",
+  "source": "third-party",
+  "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
+  "sourceSkillName": "hypothesis-generation",
+  "payload": {
+    "type": "persona",
+    "promptFile": "prompt.md"
+  }
+}
