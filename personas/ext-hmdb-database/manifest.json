@@ -1,0 +1,41 @@
+{
+  "id": "ext-hmdb-database",
+  "name": "Hmdb Database",
+  "description": "Access Human Metabolome Database (220K+ metabolites). Search by name/ID/structure, retrieve chemical properties, biomarker data, NMR/MS spectra, pathways, for metabolomics and identification.",
+  "type": "persona",
+  "version": "1.0.0",
+  "tags": [
+    "machine-learning",
+    "chemistry",
+    "clinical",
+    "proteomics",
+    "database",
+    "pathway-analysis",
+    "hmdb-database"
+  ],
+  "languages": [
+    "r"
+  ],
+  "priority": 3,
+  "capabilities": {
+    "providesTemplate": false,
+    "modifiesSystemPrompt": true,
+    "inspectFiles": false,
+    "validatesOutput": false,
+    "providesTools": false
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "createdAt": "2026-03-09T03:47:17.811Z",
+  "updatedAt": "2026-03-09T03:47:17.811Z",
+  "author": "K-Dense Inc.",
+  "enabled": true,
+  "visibility": "shared",
+  "source": "third-party",
+  "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
+  "sourceSkillName": "hmdb-database",
+  "payload": {
+    "type": "persona",
+    "promptFile": "prompt.md"
+  }
+}
