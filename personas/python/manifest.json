@@ -1,0 +1,38 @@
+{
+  "id": "python",
+  "name": "Python",
+  "description": "Set rules for Python",
+  "type": "persona",
+  "version": "1.0.0",
+  "tags": [],
+  "languages": [
+    "python"
+  ],
+  "priority": 8,
+  "capabilities": {
+    "inspectFiles": false,
+    "providesTools": false,
+    "validatesOutput": false,
+    "providesTemplate": false,
+    "modifiesSystemPrompt": true
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "gitMeta": {
+    "sha": "f4c35c3510718559b3bd0ba48f4407fe09c90f4a",
+    "author": "ViaScience",
+    "branch": "main",
+    "message": "Add skill: Python v1.0.0",
+    "shortSha": "f4c35c",
+    "committedAt": "2026-03-09T04:15:47Z"
+  },
+  "enabled": true,
+  "visibility": "shared",
+  "source": "platform",
+  "createdAt": "2026-03-09T04:15:47.633Z",
+  "updatedAt": "2026-03-09T20:02:29.529Z",
+  "payload": {
+    "type": "persona",
+    "promptFile": "prompt.md"
+  }
+}
