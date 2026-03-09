@@ -1,0 +1,40 @@
+{
+  "id": "ext-bindingdb-database",
+  "name": "Bindingdb Database",
+  "description": "Query BindingDB for measured drug-target binding affinities (Ki, Kd, IC50, EC50). Search by target (UniProt ID), compound (SMILES/name), or pathogen. Essential for drug discovery, lead optimization, polypharmacology analysis, and structure-activity relationship (SAR) studies.",
+  "type": "persona",
+  "version": "1.0.0",
+  "tags": [
+    "genomics",
+    "chemistry",
+    "writing",
+    "proteomics",
+    "database",
+    "bindingdb-database"
+  ],
+  "languages": [
+    "python"
+  ],
+  "priority": 3,
+  "capabilities": {
+    "providesTemplate": false,
+    "modifiesSystemPrompt": true,
+    "inspectFiles": false,
+    "validatesOutput": false,
+    "providesTools": false
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "createdAt": "2026-03-09T03:47:17.797Z",
+  "updatedAt": "2026-03-09T03:47:17.797Z",
+  "author": "Kuan-lin Huang",
+  "enabled": true,
+  "visibility": "shared",
+  "source": "third-party",
+  "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
+  "sourceSkillName": "bindingdb-database",
+  "payload": {
+    "type": "persona",
+    "promptFile": "prompt.md"
+  }
+}
