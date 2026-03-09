@@ -1,19 +1,20 @@
 {
-  "id": "deseq2-differential-expression",
-  "name": "DESeq2 Differential Expression",
-  "description": "Standard RNA-seq differential expression workflow using DESeq2",
+  "id": "phykit-analysis",
+  "name": "PhyKIT Phylogenetic Analysis",
+  "description": "Analyze phylogenetic trees with PhyKIT metrics (treeness, saturation, DVMC, evolutionary rate, etc.)",
   "type": "template",
   "version": "1.0.0",
   "tags": [
-    "differential-expression",
-    "rna-seq",
-    "deseq2",
+    "phylogenetics",
+    "tree-analysis",
+    "phykit",
+    "evolution",
     "genomics"
   ],
   "languages": [
-    "r"
+    "python"
   ],
-  "priority": 10,
+  "priority": 8,
   "capabilities": {
     "inspectFiles": false,
     "providesTools": false,
@@ -26,11 +27,11 @@
   "enabled": true,
   "visibility": "builtin",
   "source": "platform",
-  "createdAt": "2026-03-08T20:47:54.755Z",
-  "updatedAt": "2026-03-09T18:36:17.381Z",
+  "createdAt": "2026-03-09T18:36:17.382Z",
+  "updatedAt": "2026-03-09T18:36:17.382Z",
   "payload": {
     "type": "template",
-    "codeFile": "code.R",
+    "codeFile": "code.py",
     "guidanceFile": "guidance.md"
   }
 }

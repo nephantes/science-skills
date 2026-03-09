@@ -1,0 +1,12 @@
+{
+  "skillId": "clipkit-trimming",
+  "status": "not-applicable",
+  "stdout": "No sample data available for this skill.",
+  "stderr": "",
+  "exitCode": -1,
+  "durationMs": 0,
+  "language": "python",
+  "generatedAt": "2026-03-09T16:01:43.208Z",
+  "inputFiles": [],
+  "outputFiles": []
+}

@@ -1,0 +1,11 @@
+When analyzing phylogenetic trees with PhyKIT:
+- PhyKIT is a CLI tool: 'phykit <command> <treefile>' — call via subprocess
+- Key commands: treeness, saturation, dvmc, evo_rate, tree_length, lb_score (long branch), rcv, patristic_distances
+- Tree files are in Newick format (.treefile extension)
+- Alignment files (.clipkit, .mafft, .fasta) may be needed for some commands (e.g., saturation, parsimony_informative)
+- Parse stdout: most commands output a single float; some output tab-separated values
+- For 3-taxon unrooted trees, treeness = 0.0 (no internal branches)
+- When comparing animal vs fungal genes, split by species prefix in sequence IDs (Animals_ vs Fungi_)
+- Use Mann-Whitney U test (scipy.stats.mannwhitneyu) for statistical comparisons
+- Always report per-gene values, medians, and summary statistics
+- Save results to CSV with columns: ortholog_id, metric_value, kingdom
