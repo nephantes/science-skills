@@ -1,0 +1,38 @@
+{
+  "id": "ext-pyopenms",
+  "name": "Pyopenms",
+  "description": "Complete mass spectrometry analysis platform. Use for proteomics workflows feature detection, peptide identification, protein quantification, and complex LC-MS/MS pipelines. Supports extensive file formats and algorithms. Best for proteomics, comprehensive MS data processing. For simple spectral comparison and metabolite ID use matchms.",
+  "type": "persona",
+  "version": "1.0.0",
+  "tags": [
+    "chemistry",
+    "proteomics",
+    "database",
+    "pyopenms"
+  ],
+  "languages": [
+    "python"
+  ],
+  "priority": 3,
+  "capabilities": {
+    "providesTemplate": false,
+    "modifiesSystemPrompt": true,
+    "inspectFiles": false,
+    "validatesOutput": false,
+    "providesTools": false
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "createdAt": "2026-03-09T03:47:17.826Z",
+  "updatedAt": "2026-03-09T03:47:17.826Z",
+  "author": "K-Dense Inc.",
+  "enabled": true,
+  "visibility": "shared",
+  "source": "third-party",
+  "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
+  "sourceSkillName": "pyopenms",
+  "payload": {
+    "type": "persona",
+    "promptFile": "prompt.md"
+  }
+}
