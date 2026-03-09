@@ -1,0 +1,39 @@
+{
+  "id": "ext-markdown-mermaid-writing",
+  "name": "Markdown Mermaid Writing",
+  "description": "Comprehensive markdown and Mermaid diagram writing skill. Use when creating any scientific document, report, analysis, or visualization. Establishes text-based diagrams as the default documentation standard with full style guides (markdown + mermaid), 24 diagram type references, and 9 document templates.",
+  "type": "persona",
+  "version": "1.0.0",
+  "tags": [
+    "genomics",
+    "visualization",
+    "writing",
+    "imaging",
+    "markdown-mermaid-writing"
+  ],
+  "languages": [
+    "python"
+  ],
+  "priority": 3,
+  "capabilities": {
+    "providesTemplate": false,
+    "modifiesSystemPrompt": true,
+    "inspectFiles": false,
+    "validatesOutput": false,
+    "providesTools": false
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "createdAt": "2026-03-09T03:47:17.815Z",
+  "updatedAt": "2026-03-09T03:47:17.815Z",
+  "author": "Clayton Young / Superior Byte Works, LLC (@borealBytes)",
+  "enabled": true,
+  "visibility": "shared",
+  "source": "third-party",
+  "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
+  "sourceSkillName": "markdown-mermaid-writing",
+  "payload": {
+    "type": "persona",
+    "promptFile": "prompt.md"
+  }
+}
