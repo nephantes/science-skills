@@ -1,0 +1,27 @@
+{
+  "id": "r",
+  "name": "R",
+  "description": "Sets rule for R usage",
+  "type": "persona",
+  "version": "1.0.0",
+  "tags": [],
+  "languages": [],
+  "priority": 0,
+  "capabilities": {
+    "providesTemplate": false,
+    "modifiesSystemPrompt": true,
+    "inspectFiles": false,
+    "validatesOutput": false,
+    "providesTools": false
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "createdAt": "2026-03-09T04:15:17.519Z",
+  "updatedAt": "2026-03-09T04:15:17.519Z",
+  "enabled": true,
+  "visibility": "shared",
+  "payload": {
+    "type": "persona",
+    "promptFile": "prompt.md"
+  }
+}
