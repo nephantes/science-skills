@@ -1,0 +1,29 @@
+{
+  "id": "python",
+  "name": "Python",
+  "description": "Set rules for Python",
+  "type": "template",
+  "version": "1.0.0",
+  "tags": [],
+  "languages": [
+    "python"
+  ],
+  "priority": 0,
+  "capabilities": {
+    "providesTemplate": true,
+    "modifiesSystemPrompt": false,
+    "inspectFiles": false,
+    "validatesOutput": false,
+    "providesTools": false
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "createdAt": "2026-03-09T04:15:47.633Z",
+  "updatedAt": "2026-03-09T04:15:47.633Z",
+  "enabled": true,
+  "visibility": "shared",
+  "payload": {
+    "type": "template",
+    "codeFile": "code.py"
+  }
+}
