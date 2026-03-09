@@ -1,0 +1,35 @@
+{
+  "id": "deseq2-differential-expression",
+  "name": "DESeq2 Differential Expression",
+  "description": "Standard RNA-seq differential expression workflow using DESeq2",
+  "type": "template",
+  "version": "1.0.0",
+  "tags": [
+    "differential-expression",
+    "rna-seq",
+    "deseq2",
+    "genomics"
+  ],
+  "languages": [
+    "r"
+  ],
+  "priority": 10,
+  "capabilities": {
+    "inspectFiles": false,
+    "providesTools": false,
+    "validatesOutput": false,
+    "providesTemplate": true,
+    "modifiesSystemPrompt": false
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "payload": {
+    "type": "template",
+    "guidance": "When performing differential expression with DESeq2, follow this\ntested workflow. Ensure sample metadata is loaded from sample_metadata.csv\nand contrasts are derived from the data, never hardcoded.",
+    "templateCode": "library(DESeq2)\nlibrary(tibble)\n\ncounts <- read.csv(\"counts.csv\", row.names = 1)\nmeta <- read.csv(\"sample_metadata.csv\")\nmeta$condition <- factor(meta$condition)\n\ndds <- DESeqDataSetFromMatrix(\n  countData = round(counts),\n  colData   = meta,\n  design    = ~ condition\n)\ndds <- DESeq(dds)\nres <- results(dds, alpha = 0.05)\nres_df <- as.data.frame(res) %>%\n  rownames_to_column(\"gene\") %>%\n  arrange(padj)\nwrite.csv(res_df, \"de_results.csv\", row.names = FALSE)\ncat(\"Significant genes (padj < 0.05):\", sum(res_df$padj < 0.05, na.rm = TRUE), \"\\n\")"
+  },
+  "enabled": true,
+  "visibility": "builtin",
+  "createdAt": "2026-03-08T20:47:54.755Z",
+  "updatedAt": "2026-03-09T01:02:51.070Z"
+}

@@ -1,0 +1,30 @@
+{
+  "id": "output-validator",
+  "name": "Output Validator",
+  "description": "Validates step outputs for empty DataFrames, all-NaN data, and missing expected files",
+  "type": "validator",
+  "version": "1.0.0",
+  "tags": [
+    "validation",
+    "error-prevention"
+  ],
+  "languages": [],
+  "priority": 0,
+  "capabilities": {
+    "inspectFiles": false,
+    "providesTools": false,
+    "validatesOutput": true,
+    "providesTemplate": false,
+    "modifiesSystemPrompt": false
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "payload": {
+    "type": "validator",
+    "moduleRef": "@builtin/output-validator"
+  },
+  "enabled": true,
+  "visibility": "builtin",
+  "createdAt": "2026-03-08T20:47:54.759Z",
+  "updatedAt": "2026-03-09T01:02:51.070Z"
+}

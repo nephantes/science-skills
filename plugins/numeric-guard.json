@@ -1,0 +1,30 @@
+{
+  "id": "numeric-guard",
+  "name": "Numeric Column Guard",
+  "description": "Detects non-numeric columns in uploaded data files and instructs the planner to drop them for numeric tasks",
+  "type": "plugin",
+  "version": "1.0.0",
+  "tags": [
+    "data-cleaning",
+    "preprocessing"
+  ],
+  "languages": [],
+  "priority": 25,
+  "capabilities": {
+    "inspectFiles": true,
+    "providesTools": false,
+    "validatesOutput": false,
+    "providesTemplate": false,
+    "modifiesSystemPrompt": false
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "payload": {
+    "type": "plugin",
+    "moduleRef": "@builtin/numeric-guard"
+  },
+  "enabled": true,
+  "visibility": "builtin",
+  "createdAt": "2026-03-08T20:47:54.759Z",
+  "updatedAt": "2026-03-09T01:02:51.070Z"
+}

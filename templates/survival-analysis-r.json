@@ -1,0 +1,34 @@
+{
+  "id": "survival-analysis-r",
+  "name": "Survival / Kaplan-Meier Analysis (R)",
+  "description": "Kaplan-Meier curves and Cox proportional hazards modeling in R",
+  "type": "template",
+  "version": "1.0.0",
+  "tags": [
+    "survival-analysis",
+    "clinical-trials",
+    "kaplan-meier"
+  ],
+  "languages": [
+    "r"
+  ],
+  "priority": 5,
+  "capabilities": {
+    "inspectFiles": false,
+    "providesTools": false,
+    "validatesOutput": false,
+    "providesTemplate": true,
+    "modifiesSystemPrompt": false
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "payload": {
+    "type": "template",
+    "guidance": "When performing survival analysis in R, use the survival package.\nIf survminer is available, use ggsurvplot for publication-quality plots.\nOtherwise use base plot(). Always include confidence intervals and p-values.",
+    "templateCode": "library(survival)\nlibrary(ggplot2)\n\ndf <- read.csv(\"clinical_data.csv\")\n# Expect columns: time, event (1=event, 0=censored), group\n\ndf$group <- factor(df$group)\n\n# Kaplan-Meier fit\nkm_fit <- survfit(Surv(time, event) ~ group, data = df)\ncat(\"Kaplan-Meier summary:\\n\")\nprint(km_fit)\n\n# Extract KM data for ggplot\nkm_data <- data.frame(\n  time = km_fit$time,\n  surv = km_fit$surv,\n  upper = km_fit$upper,\n  lower = km_fit$lower,\n  group = rep(levels(df$group), km_fit$strata)\n)\n\np <- ggplot(km_data, aes(x = time, y = surv, color = group)) +\n  geom_step(linewidth = 1) +\n  geom_ribbon(aes(ymin = lower, ymax = upper, fill = group), alpha = 0.15, stat = \"identity\") +\n  labs(x = \"Time\", y = \"Survival Probability\", title = \"Kaplan-Meier Survival Curves\") +\n  theme_minimal() +\n  scale_y_continuous(limits = c(0, 1))\nggsave(\"km_curves.png\", p, width = 10, height = 6, dpi = 100)\n\n# Log-rank test\nlr <- survdiff(Surv(time, event) ~ group, data = df)\ncat(\"\\nLog-rank test chi-squared:\", round(lr$chisq, 3),\n    \"p-value:\", format.pval(1 - pchisq(lr$chisq, length(lr$n) - 1)), \"\\n\")\n\n# Cox proportional hazards\ncox_fit <- coxph(Surv(time, event) ~ group, data = df)\ncat(\"\\nCox PH model summary:\\n\")\nprint(summary(cox_fit))"
+  },
+  "enabled": true,
+  "visibility": "builtin",
+  "createdAt": "2026-03-08T20:47:54.759Z",
+  "updatedAt": "2026-03-09T01:02:51.070Z"
+}

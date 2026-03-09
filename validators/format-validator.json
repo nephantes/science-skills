@@ -1,0 +1,30 @@
+{
+  "id": "format-validator",
+  "name": "Format Validator",
+  "description": "Validates output CSV/TSV files for correct structure, consistent delimiters, and proper headers",
+  "type": "validator",
+  "version": "1.0.0",
+  "tags": [
+    "data-cleaning",
+    "error-prevention"
+  ],
+  "languages": [],
+  "priority": 0,
+  "capabilities": {
+    "inspectFiles": false,
+    "providesTools": false,
+    "validatesOutput": true,
+    "providesTemplate": false,
+    "modifiesSystemPrompt": false
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "payload": {
+    "type": "validator",
+    "moduleRef": "@builtin/format-detector"
+  },
+  "enabled": true,
+  "visibility": "builtin",
+  "createdAt": "2026-03-09T00:03:27.146Z",
+  "updatedAt": "2026-03-09T01:02:51.070Z"
+}

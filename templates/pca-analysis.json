@@ -1,0 +1,35 @@
+{
+  "id": "pca-analysis",
+  "name": "PCA / Dimensionality Reduction",
+  "description": "Principal component analysis with variance-filtered features",
+  "type": "template",
+  "version": "1.0.0",
+  "tags": [
+    "pca",
+    "dimensionality-reduction",
+    "visualization",
+    "genomics"
+  ],
+  "languages": [
+    "python"
+  ],
+  "priority": 5,
+  "capabilities": {
+    "inspectFiles": false,
+    "providesTools": false,
+    "validatesOutput": false,
+    "providesTemplate": true,
+    "modifiesSystemPrompt": false
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "payload": {
+    "type": "template",
+    "guidance": "When performing PCA, always: (1) transpose so samples are rows,\n(2) remove zero-variance features, (3) cap n_components to min(n_samples-1, n_features),\n(4) color by sample groups from sample_metadata.csv.",
+    "templateCode": "import pandas as pd\nimport numpy as np\nfrom sklearn.decomposition import PCA\nfrom sklearn.preprocessing import StandardScaler\nimport matplotlib.pyplot as plt\n\nexpr = pd.read_csv(\"expression_matrix.csv\", index_col=0)\nmeta = pd.read_csv(\"sample_metadata.csv\")\n\nX = expr.values.T  # samples as rows\nX = X[:, X.var(axis=0) > 0]  # remove zero-variance\nassert np.isfinite(X).all(), \"NaN/inf in input\"\n\nscaler = StandardScaler()\nX_scaled = scaler.fit_transform(X)\n\nn_comp = min(2, X.shape[0] - 1, X.shape[1])\npca = PCA(n_components=n_comp)\npcs = pca.fit_transform(X_scaled)\n\nfig, ax = plt.subplots(figsize=(8, 6))\nfor grp in meta['condition'].unique():\n    mask = meta['condition'].values == grp\n    ax.scatter(pcs[mask, 0], pcs[mask, 1], label=grp, s=60, alpha=0.8)\nax.set_xlabel(f\"PC1 ({pca.explained_variance_ratio_[0]*100:.1f}%)\")\nax.set_ylabel(f\"PC2 ({pca.explained_variance_ratio_[1]*100:.1f}%)\")\nax.legend()\nplt.savefig(\"pca_plot.png\", dpi=100, bbox_inches=\"tight\")\nplt.close()"
+  },
+  "enabled": true,
+  "visibility": "builtin",
+  "createdAt": "2026-03-08T20:47:54.759Z",
+  "updatedAt": "2026-03-09T01:02:51.070Z"
+}

@@ -1,0 +1,29 @@
+{
+  "id": "silent-error-detector",
+  "name": "Silent Error Prevention",
+  "description": "Injects anti-pattern rules to prevent silent errors in generated code",
+  "type": "plugin",
+  "version": "1.0.0",
+  "tags": [
+    "error-prevention"
+  ],
+  "languages": [],
+  "priority": 30,
+  "capabilities": {
+    "inspectFiles": true,
+    "providesTools": false,
+    "validatesOutput": false,
+    "providesTemplate": false,
+    "modifiesSystemPrompt": false
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "payload": {
+    "type": "plugin",
+    "moduleRef": "@builtin/silent-error-detector"
+  },
+  "enabled": true,
+  "visibility": "builtin",
+  "createdAt": "2026-03-08T20:47:54.759Z",
+  "updatedAt": "2026-03-09T01:02:51.070Z"
+}

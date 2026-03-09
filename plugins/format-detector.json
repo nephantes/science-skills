@@ -1,0 +1,31 @@
+{
+  "id": "format-detector",
+  "name": "Data Format Detector",
+  "description": "Inspects uploaded files to detect format, delimiter, and structure",
+  "type": "plugin",
+  "version": "1.0.0",
+  "tags": [
+    "data-inspection",
+    "preprocessing",
+    "data-cleaning"
+  ],
+  "languages": [],
+  "priority": 20,
+  "capabilities": {
+    "inspectFiles": true,
+    "providesTools": false,
+    "validatesOutput": false,
+    "providesTemplate": false,
+    "modifiesSystemPrompt": false
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "payload": {
+    "type": "plugin",
+    "moduleRef": "@builtin/format-detector"
+  },
+  "enabled": true,
+  "visibility": "builtin",
+  "createdAt": "2026-03-08T20:47:54.759Z",
+  "updatedAt": "2026-03-09T01:02:51.070Z"
+}

@@ -1,0 +1,35 @@
+{
+  "id": "pydeseq2-differential-expression",
+  "name": "PyDESeq2 Differential Expression",
+  "description": "RNA-seq differential expression workflow using PyDESeq2 in Python",
+  "type": "template",
+  "version": "1.0.0",
+  "tags": [
+    "differential-expression",
+    "rna-seq",
+    "deseq2",
+    "genomics"
+  ],
+  "languages": [
+    "python"
+  ],
+  "priority": 10,
+  "capabilities": {
+    "inspectFiles": false,
+    "providesTools": false,
+    "validatesOutput": false,
+    "providesTemplate": true,
+    "modifiesSystemPrompt": false
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "payload": {
+    "type": "template",
+    "guidance": "When performing differential expression in Python, use pydeseq2.\nEnsure sample metadata is loaded from sample_metadata.csv and contrasts are\nderived from the data, never hardcoded. The count matrix must have genes as\nrows and samples as columns. Round counts to integers before passing to DeseqDataSet.",
+    "templateCode": "import pandas as pd\nimport numpy as np\nfrom pydeseq2.dds import DeseqDataSet\nfrom pydeseq2.ds import DeseqStats\n\ncounts = pd.read_csv(\"counts.csv\", index_col=0)\nmeta = pd.read_csv(\"sample_metadata.csv\", index_col=0)\n\n# Ensure integer counts, genes as rows\ncounts = counts.round().astype(int)\n\n# Align sample order\ncommon = counts.columns.intersection(meta.index)\ncounts = counts[common]\nmeta = meta.loc[common]\n\ndds = DeseqDataSet(\n    counts=counts.T,  # pydeseq2 expects samples as rows\n    metadata=meta,\n    design=\"~condition\",\n)\ndds.deseq2()\n\n# Extract results — derive contrast from condition levels\nlevels = sorted(meta[\"condition\"].unique())\ncontrast = [\"condition\", levels[0], levels[-1]]\nstat_res = DeseqStats(dds, contrast=contrast)\nstat_res.summary()\nres_df = stat_res.results_df.sort_values(\"padj\")\n\nres_df.to_csv(\"de_results.csv\")\nsig = (res_df[\"padj\"] < 0.05).sum()\nprint(f\"Significant genes (padj < 0.05): {sig}\")\nprint(f\"Total genes tested: {len(res_df)}\")"
+  },
+  "enabled": true,
+  "visibility": "builtin",
+  "createdAt": "2026-03-08T20:47:54.759Z",
+  "updatedAt": "2026-03-09T01:02:51.070Z"
+}

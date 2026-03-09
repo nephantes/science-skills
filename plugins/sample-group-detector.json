@@ -1,0 +1,31 @@
+{
+  "id": "sample-group-detector",
+  "name": "Sample Group Detector",
+  "description": "Detects sample groups from column names when no metadata file is attached",
+  "type": "plugin",
+  "version": "1.0.0",
+  "tags": [
+    "data-cleaning",
+    "preprocessing",
+    "sample-metadata"
+  ],
+  "languages": [],
+  "priority": 15,
+  "capabilities": {
+    "inspectFiles": true,
+    "providesTools": false,
+    "validatesOutput": false,
+    "providesTemplate": false,
+    "modifiesSystemPrompt": false
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "payload": {
+    "type": "plugin",
+    "moduleRef": "@builtin/sample-group-detector"
+  },
+  "enabled": true,
+  "visibility": "builtin",
+  "createdAt": "2026-03-08T20:47:54.759Z",
+  "updatedAt": "2026-03-09T01:02:51.070Z"
+}
