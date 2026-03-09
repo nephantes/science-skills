@@ -1,0 +1,41 @@
+{
+  "id": "ext-latchbio-integration",
+  "name": "Latchbio Integration",
+  "description": "Latch platform for bioinformatics workflows. Build pipelines with Latch SDK, @workflow/@task decorators, deploy serverless workflows, LatchFile/LatchDir, Nextflow/Snakemake integration.",
+  "type": "persona",
+  "version": "1.0.0",
+  "tags": [
+    "genomics",
+    "bioinformatics",
+    "proteomics",
+    "single-cell",
+    "differential-expression",
+    "pathway-analysis",
+    "latchbio-integration"
+  ],
+  "languages": [
+    "python"
+  ],
+  "priority": 3,
+  "capabilities": {
+    "providesTemplate": false,
+    "modifiesSystemPrompt": true,
+    "inspectFiles": false,
+    "validatesOutput": false,
+    "providesTools": false
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "createdAt": "2026-03-09T03:47:17.814Z",
+  "updatedAt": "2026-03-09T03:47:17.814Z",
+  "author": "K-Dense Inc.",
+  "enabled": true,
+  "visibility": "shared",
+  "source": "third-party",
+  "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
+  "sourceSkillName": "latchbio-integration",
+  "payload": {
+    "type": "persona",
+    "promptFile": "prompt.md"
+  }
+}
