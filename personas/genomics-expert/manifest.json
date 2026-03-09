@@ -1,0 +1,32 @@
+{
+  "id": "genomics-expert",
+  "name": "Genomics Expert",
+  "description": "Domain expertise for genomics and transcriptomics analyses",
+  "type": "persona",
+  "version": "1.0.0",
+  "tags": [
+    "genomics",
+    "rna-seq",
+    "differential-expression",
+    "transcriptomics"
+  ],
+  "languages": [],
+  "priority": 5,
+  "capabilities": {
+    "inspectFiles": false,
+    "providesTools": false,
+    "validatesOutput": false,
+    "providesTemplate": false,
+    "modifiesSystemPrompt": true
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "enabled": true,
+  "visibility": "builtin",
+  "createdAt": "2026-03-08T20:47:54.759Z",
+  "updatedAt": "2026-03-09T01:18:57.631Z",
+  "payload": {
+    "type": "persona",
+    "promptFile": "prompt.md"
+  }
+}

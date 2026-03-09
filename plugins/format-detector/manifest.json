@@ -1,16 +1,16 @@
 {
-  "id": "sample-group-detector",
-  "name": "Sample Group Detector",
-  "description": "Detects sample groups from column names when no metadata file is attached",
+  "id": "format-detector",
+  "name": "Data Format Detector",
+  "description": "Inspects uploaded files to detect format, delimiter, and structure",
   "type": "plugin",
   "version": "1.0.0",
   "tags": [
-    "data-cleaning",
+    "data-inspection",
     "preprocessing",
-    "sample-metadata"
+    "data-cleaning"
   ],
   "languages": [],
-  "priority": 15,
+  "priority": 20,
   "capabilities": {
     "inspectFiles": true,
     "providesTools": false,
@@ -20,12 +20,12 @@
   },
   "inputSchema": [],
   "outputSchema": [],
-  "payload": {
-    "type": "plugin",
-    "moduleRef": "@builtin/sample-group-detector"
-  },
   "enabled": true,
   "visibility": "builtin",
   "createdAt": "2026-03-08T20:47:54.759Z",
-  "updatedAt": "2026-03-09T01:18:57.631Z"
+  "updatedAt": "2026-03-09T01:18:57.631Z",
+  "payload": {
+    "type": "plugin",
+    "moduleRef": "@builtin/format-detector"
+  }
 }

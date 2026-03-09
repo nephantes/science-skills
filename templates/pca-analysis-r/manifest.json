@@ -1,0 +1,35 @@
+{
+  "id": "pca-analysis-r",
+  "name": "PCA / Dimensionality Reduction (R)",
+  "description": "Principal component analysis with variance-filtered features in R",
+  "type": "template",
+  "version": "1.0.0",
+  "tags": [
+    "pca",
+    "dimensionality-reduction",
+    "visualization",
+    "genomics"
+  ],
+  "languages": [
+    "r"
+  ],
+  "priority": 5,
+  "capabilities": {
+    "inspectFiles": false,
+    "providesTools": false,
+    "validatesOutput": false,
+    "providesTemplate": true,
+    "modifiesSystemPrompt": false
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "enabled": true,
+  "visibility": "builtin",
+  "createdAt": "2026-03-08T20:47:54.759Z",
+  "updatedAt": "2026-03-09T01:18:57.631Z",
+  "payload": {
+    "type": "template",
+    "codeFile": "code.R",
+    "guidanceFile": "guidance.md"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "id": "deseq2-differential-expression",
+  "name": "DESeq2 Differential Expression",
+  "description": "Standard RNA-seq differential expression workflow using DESeq2",
+  "type": "template",
+  "version": "1.0.0",
+  "tags": [
+    "differential-expression",
+    "rna-seq",
+    "deseq2",
+    "genomics"
+  ],
+  "languages": [
+    "r"
+  ],
+  "priority": 10,
+  "capabilities": {
+    "inspectFiles": false,
+    "providesTools": false,
+    "validatesOutput": false,
+    "providesTemplate": true,
+    "modifiesSystemPrompt": false
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "enabled": true,
+  "visibility": "builtin",
+  "createdAt": "2026-03-08T20:47:54.755Z",
+  "updatedAt": "2026-03-09T01:18:57.631Z",
+  "payload": {
+    "type": "template",
+    "codeFile": "code.R",
+    "guidanceFile": "guidance.md"
+  }
+}

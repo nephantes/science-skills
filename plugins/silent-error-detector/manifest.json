@@ -1,15 +1,14 @@
 {
-  "id": "numeric-guard",
-  "name": "Numeric Column Guard",
-  "description": "Detects non-numeric columns in uploaded data files and instructs the planner to drop them for numeric tasks",
+  "id": "silent-error-detector",
+  "name": "Silent Error Prevention",
+  "description": "Injects anti-pattern rules to prevent silent errors in generated code",
   "type": "plugin",
   "version": "1.0.0",
   "tags": [
-    "data-cleaning",
-    "preprocessing"
+    "error-prevention"
   ],
   "languages": [],
-  "priority": 25,
+  "priority": 30,
   "capabilities": {
     "inspectFiles": true,
     "providesTools": false,
@@ -19,12 +18,12 @@
   },
   "inputSchema": [],
   "outputSchema": [],
-  "payload": {
-    "type": "plugin",
-    "moduleRef": "@builtin/numeric-guard"
-  },
   "enabled": true,
   "visibility": "builtin",
   "createdAt": "2026-03-08T20:47:54.759Z",
-  "updatedAt": "2026-03-09T01:18:57.631Z"
+  "updatedAt": "2026-03-09T01:18:57.631Z",
+  "payload": {
+    "type": "plugin",
+    "moduleRef": "@builtin/silent-error-detector"
+  }
 }

@@ -1,0 +1,34 @@
+{
+  "id": "correlation-analysis",
+  "name": "Correlation Analysis",
+  "description": "Multiple correlation methods with robustness checks",
+  "type": "template",
+  "version": "1.0.0",
+  "tags": [
+    "correlation",
+    "statistics",
+    "visualization"
+  ],
+  "languages": [
+    "python"
+  ],
+  "priority": 5,
+  "capabilities": {
+    "inspectFiles": false,
+    "providesTools": false,
+    "validatesOutput": false,
+    "providesTemplate": true,
+    "modifiesSystemPrompt": false
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "enabled": true,
+  "visibility": "builtin",
+  "createdAt": "2026-03-08T20:47:54.759Z",
+  "updatedAt": "2026-03-09T01:18:57.631Z",
+  "payload": {
+    "type": "template",
+    "codeFile": "code.py",
+    "guidanceFile": "guidance.md"
+  }
+}

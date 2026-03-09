@@ -1,0 +1,536 @@
+import type { PluginParams, PluginResult } from '../types';
+import * as fs from 'fs';
+import * as path from 'path';
+
+// ─── Controlled Vocabulary + Abbreviation Expansion ────────────────────────
+
+const BIO_MAP: Record<string, Array<[string, string]>> = {
+  genotype: [
+    ['wt', 'Wild Type'], ['ko', 'Knockout'], ['het', 'Heterozygous'],
+    ['wildtype', 'Wild Type'], ['knockout', 'Knockout'], ['heterozygous', 'Heterozygous'],
+    ['mutant', 'Mutant'], ['mut', 'Mutant'], ['transgenic', 'Transgenic'],
+    ['tg', 'Transgenic'], ['flox', 'Floxed'], ['cre', 'Cre Recombinase'],
+    ['kd', 'Knockdown'], ['oe', 'Overexpression'], ['null', 'Null Allele'],
+    ['ki', 'Knock-In'], ['wt1', 'Wild Type Rep1'], ['ko1', 'Knockout Rep1'],
+    ['wt2', 'Wild Type Rep2'], ['ko2', 'Knockout Rep2'],
+  ],
+  diet: [
+    ['chow', 'Chow Diet'], ['hfd', 'High Fat Diet'], ['hf', 'High Fat'],
+    ['lfd', 'Low Fat Diet'], ['lfat', 'Low Fat'], ['hfat', 'High Fat'],
+    ['normal', 'Normal Diet'], ['obesogenic', 'Obesogenic Diet'],
+    ['western', 'Western Diet'], ['ketogenic', 'Ketogenic Diet'], ['keto', 'Ketogenic'],
+    ['fasting', 'Fasting'], ['fed', 'Fed'], ['refed', 'Refed'],
+    ['hfhs', 'High Fat High Sucrose'], ['nd', 'Normal Diet'],
+    ['cd', 'Control Diet'], ['wd', 'Western Diet'],
+  ],
+  perturbation: [
+    ['lps', 'Lipopolysaccharide'], ['ifn', 'Interferon'], ['tnf', 'TNF-alpha'],
+    ['tgfb', 'TGF-beta'], ['il6', 'Interleukin-6'], ['il1b', 'Interleukin-1beta'],
+    ['dex', 'Dexamethasone'], ['rapa', 'Rapamycin'], ['torin', 'Torin'],
+    ['crispr', 'CRISPR'], ['sirna', 'siRNA'], ['shrna', 'shRNA'],
+    ['radiation', 'Radiation'], ['irradiation', 'Irradiation'],
+    ['hypoxia', 'Hypoxia'], ['normoxia', 'Normoxia'],
+    ['stim', 'Stimulated'], ['unstim', 'Unstimulated'],
+    ['infection', 'Infection'], ['infected', 'Infected'],
+  ],
+  condition: [
+    ['ctrl', 'Control'], ['control', 'Control'], ['treat', 'Treated'],
+    ['treated', 'Treated'], ['treatment', 'Treatment'], ['vehicle', 'Vehicle'],
+    ['veh', 'Vehicle'], ['untreated', 'Untreated'], ['mock', 'Mock'],
+    ['sham', 'Sham'], ['drug', 'Drug'], ['dmso', 'DMSO'],
+    ['stimulated', 'Stimulated'], ['unstimulated', 'Unstimulated'],
+    ['exposed', 'Exposed'], ['unexposed', 'Unexposed'],
+    ['placebo', 'Placebo'], ['baseline', 'Baseline'],
+  ],
+  sex: [
+    ['m', 'Male'], ['f', 'Female'], ['male', 'Male'], ['female', 'Female'],
+  ],
+  tissue: [
+    ['liver', 'Liver'], ['kidney', 'Kidney'], ['brain', 'Brain'],
+    ['heart', 'Heart'], ['lung', 'Lung'], ['muscle', 'Muscle'],
+    ['spleen', 'Spleen'], ['adipose', 'Adipose Tissue'],
+    ['cortex', 'Cortex'], ['hippocampus', 'Hippocampus'],
+    ['hypothalamus', 'Hypothalamus'], ['colon', 'Colon'], ['skin', 'Skin'],
+    ['blood', 'Blood'], ['serum', 'Serum'], ['plasma', 'Plasma'],
+    ['pbmc', 'PBMCs'], ['bone', 'Bone'], ['marrow', 'Bone Marrow'],
+    ['thymus', 'Thymus'], ['pancreas', 'Pancreas'], ['intestine', 'Intestine'],
+    ['retina', 'Retina'], ['testis', 'Testis'], ['ovary', 'Ovary'],
+  ],
+};
+
+/** Flat lookup: token -> [category, expansion] for fast matching. */
+const TOKEN_LOOKUP = new Map<string, [string, string]>();
+for (const [category, pairs] of Object.entries(BIO_MAP)) {
+  for (const [token, expansion] of pairs) {
+    TOKEN_LOOKUP.set(token, [category, expansion]);
+  }
+}
+
+// ─── Noise Filtering ──────────────────────────────────────────────────────
+
+const NOISE_PATTERNS = [
+  /^(lane|l)[0-9]+$/i,
+  /^(batch|b)[0-9]+$/i,
+  /^(plate|plt?)[0-9]+$/i,
+  /^[ACGT]{6,}$/,
+  /^s[0-9]{3,}$/i,
+  /^(lib|library)[0-9]+$/i,
+  /^(run|flowcell|fc)[0-9]+$/i,
+  /^[A-H](0[1-9]|1[0-2])$/,
+];
+
+function isNoiseToken(token: string): boolean {
+  return NOISE_PATTERNS.some(p => p.test(token));
+}
+
+// ─── Numeric Pattern Differentiation ──────────────────────────────────────
+
+const TIMEPOINT_PATTERNS = [
+  /^(\d+)(h|hr|hrs|hour|hours)$/i,
+  /^(\d+)(d|day|days)$/i,
+  /^(\d+)(w|wk|wks|week|weeks)$/i,
+  /^(\d+)(m|mo|mon|month|months)$/i,
+  /^(\d+)(min|mins|minutes?)$/i,
+  /^[tT](\d+)$/,
+  /^(day|d)(\d+)$/i,
+  /^(week|wk|w)(\d+)$/i,
+  /^(hour|hr|h)(\d+)$/i,
+];
+
+const DOSAGE_PATTERNS = [
+  /^(\d+\.?\d*)(mg|ug|ng|pg|ml|ul|mm|um|nm|pm)$/i,
+  /^(\d+\.?\d*)(mgkg|mg\/kg|mpk)$/i,
+  /^(low|mid|high)dose$/i,
+  /^dose(\d+)$/i,
+];
+
+function classifyNumericToken(token: string): 'timepoint' | 'dosage' | 'replicate' | null {
+  if (TIMEPOINT_PATTERNS.some(p => p.test(token))) return 'timepoint';
+  if (DOSAGE_PATTERNS.some(p => p.test(token))) return 'dosage';
+  if (isReplicateToken(token)) return 'replicate';
+  return null;
+}
+
+// ─── Gene symbol patterns ─────────────────────────────────────────────────
+
+function parseGeneModification(token: string): [string, string] | null {
+  const deltaMatch = token.match(/^[\u0394\u03B4](.+)$/);
+  if (deltaMatch) return [deltaMatch[1], 'deletion'];
+
+  const suffixMatch = token.match(/^([A-Za-z0-9]+?)(KO|KD|Mut|OE|KI|Null|Het|Cre|Flox)$/i);
+  if (suffixMatch && suffixMatch[1].length >= 2) {
+    return [suffixMatch[1], suffixMatch[2].toUpperCase()];
+  }
+
+  return null;
+}
+
+// ─── Shared helpers ────────────────────────────────────────────────────────
+
+const METADATA_NAMES = new Set([
+  'metadata.csv', 'sample_info.csv', 'samples.csv', 'coldata.csv',
+  'metadata.tsv', 'sample_info.tsv', 'samples.tsv', 'phenodata.csv',
+  'sample_metadata.csv', 'sampleinfo.csv', 'clinical.csv', 'clinical.tsv',
+]);
+
+function isReplicateToken(token: string): boolean {
+  return /^(rep|r|Rep|R)?[0-9]+$/.test(token);
+}
+
+// ─── Detection result types ──────────────────────────────────────────────
+
+interface DetectedGroup {
+  index?: number;
+  label: string;
+  category: string;
+  values: string[];
+  confidence: 'high' | 'medium' | 'low';
+  expansions?: string[];
+  method: string;
+}
+
+interface FileResult {
+  separator?: string;
+  groups: DetectedGroup[];
+  sampleCount: number;
+  sampleExamples: string[];
+  noiseTokens?: string[];
+  factorialStructure?: string;
+}
+
+// ─── Main execute function ──────────────────────────────────────────────
+
+export async function execute(params: PluginParams): Promise<PluginResult> {
+  // Check if a metadata file is already attached
+  const hasMetadata = params.fileNames.some(f => METADATA_NAMES.has(f.toLowerCase()));
+  if (hasMetadata) {
+    return {
+      contextText: `\u2713 Metadata file detected among uploads \u2014 use it directly for sample grouping instead of parsing column names.`,
+    };
+  }
+
+  if (params.fileNames.length === 0) {
+    return { contextText: '' };
+  }
+
+  const reports: string[] = [];
+  const metadata: Record<string, unknown> = {};
+
+  for (const fileName of params.fileNames) {
+    const filePath = path.join(params.workDir, 'uploads', fileName);
+    if (!fs.existsSync(filePath)) continue;
+
+    const ext = fileName.split('.').pop()?.toLowerCase() ?? '';
+    if (!['csv', 'tsv', 'txt'].includes(ext)) continue;
+
+    // Read header + a few data rows
+    const fd = fs.openSync(filePath, 'r');
+    const buf = Buffer.alloc(8192);
+    const bytesRead = fs.readSync(fd, buf, 0, 8192, 0);
+    fs.closeSync(fd);
+    const head = buf.toString('utf-8', 0, bytesRead);
+    const lines = head.split('\n').filter(l => l.trim().length > 0);
+    if (lines.length < 2) continue;
+
+    const delimiter = (lines[0].match(/\t/g) ?? []).length > (lines[0].match(/,/g) ?? []).length ? '\t' : ',';
+    const headers = lines[0].split(delimiter).map(h => h.trim().replace(/^["']|["']$/g, ''));
+
+    // Skip first column (usually gene IDs/names) — rest are sample names
+    const sampleNames = headers.slice(1);
+    if (sampleNames.length < 2) continue;
+
+    const result = analyzeSampleNames(sampleNames, params.language);
+    if (result && result.groups.length > 0) {
+      reports.push(formatReport(fileName, result, params.language));
+      metadata[fileName] = result;
+    }
+  }
+
+  if (reports.length === 0) {
+    return { contextText: '', metadata };
+  }
+
+  const contextText = [
+    `\uD83D\uDD0D SAMPLE GROUP DETECTION (no metadata file found):`,
+    ...reports,
+    '',
+    `IMPORTANT: In Step 1, you MUST parse these groups from the column names and save them to sample_metadata.csv.`,
+    `Do NOT hardcode group assignments \u2014 derive them programmatically from the sample names using the separator and positions shown above.`,
+    `Include ALL detected variables as columns in sample_metadata.csv.`,
+  ].join('\n');
+
+  return { contextText, metadata };
+}
+
+// ─── Core analysis engine ──────────────────────────────────────────────
+
+function analyzeSampleNames(sampleNames: string[], _language: 'python' | 'r'): FileResult | null {
+  const separators = ['.', '_', '-'];
+  let bestSep = '';
+  let bestScore = 0;
+  for (const sep of separators) {
+    const score = sampleNames.filter(s => s.includes(sep)).length / sampleNames.length;
+    if (score > bestScore) {
+      bestScore = score;
+      bestSep = sep;
+    }
+  }
+
+  if (bestScore < 0.5 || !bestSep) {
+    return analyzeWholeNames(sampleNames);
+  }
+
+  const parts = sampleNames.map(s => s.split(bestSep));
+  const maxParts = Math.max(...parts.map(p => p.length));
+  const partMatrix = parts.map(p => {
+    const padded = [...p];
+    while (padded.length < maxParts) padded.push('');
+    return padded;
+  });
+
+  const detectedGroups: DetectedGroup[] = [];
+  const usedIndices = new Set<number>();
+  const noiseTokens: string[] = [];
+
+  // Noise Filtering
+  for (let col = 0; col < maxParts; col++) {
+    const colValues = partMatrix.map(row => row[col]).filter(v => v !== '');
+    if (colValues.length > 0 && colValues.every(isNoiseToken)) {
+      noiseTokens.push(...[...new Set(colValues)]);
+      usedIndices.add(col);
+    }
+  }
+
+  // Pass 1: Controlled Vocabulary Matching
+  for (let col = 0; col < maxParts; col++) {
+    if (usedIndices.has(col)) continue;
+    const colValues = partMatrix.map(row => row[col].toLowerCase());
+    const uniqueValues = [...new Set(colValues)].filter(v => v !== '');
+    if (uniqueValues.length === 0) continue;
+
+    for (const [category, pairs] of Object.entries(BIO_MAP)) {
+      const knownTokens = pairs.map(p => p[0]);
+      const matchCount = uniqueValues.filter(v => knownTokens.includes(v)).length;
+      if (matchCount > 0 && matchCount >= uniqueValues.length * 0.5) {
+        const expansions = uniqueValues.map(v => {
+          const entry = TOKEN_LOOKUP.get(v);
+          return entry ? entry[1] : v;
+        });
+        detectedGroups.push({
+          index: col, label: category, category, values: uniqueValues,
+          confidence: matchCount === uniqueValues.length ? 'high' : 'medium',
+          expansions, method: 'vocabulary',
+        });
+        usedIndices.add(col);
+        break;
+      }
+    }
+  }
+
+  // Pass 2: Timepoint + Numeric Pattern Recognition
+  for (let col = 0; col < maxParts; col++) {
+    if (usedIndices.has(col)) continue;
+    const colValues = partMatrix.map(row => row[col]).filter(v => v !== '');
+    const uniqueValues = [...new Set(colValues)];
+    if (uniqueValues.length === 0) continue;
+
+    const classifications = uniqueValues.map(classifyNumericToken);
+    const timepointCount = classifications.filter(c => c === 'timepoint').length;
+    const dosageCount = classifications.filter(c => c === 'dosage').length;
+    const replicateCount = classifications.filter(c => c === 'replicate').length;
+
+    if (timepointCount > 0 && timepointCount >= uniqueValues.length * 0.5) {
+      detectedGroups.push({
+        index: col, label: 'timepoint', category: 'timepoint', values: uniqueValues,
+        confidence: timepointCount === uniqueValues.length ? 'high' : 'medium',
+        method: 'pattern',
+      });
+      usedIndices.add(col);
+    } else if (dosageCount > 0 && dosageCount >= uniqueValues.length * 0.5) {
+      detectedGroups.push({
+        index: col, label: 'dosage', category: 'dosage', values: uniqueValues,
+        confidence: dosageCount === uniqueValues.length ? 'high' : 'medium',
+        method: 'pattern',
+      });
+      usedIndices.add(col);
+    } else if (replicateCount === uniqueValues.length) {
+      usedIndices.add(col);
+    }
+  }
+
+  // Pass 3: Gene Symbol + Modification Patterns
+  for (let col = 0; col < maxParts; col++) {
+    if (usedIndices.has(col)) continue;
+    const colValues = partMatrix.map(row => row[col]).filter(v => v !== '');
+    const uniqueValues = [...new Set(colValues)];
+    if (uniqueValues.length === 0) continue;
+
+    const geneModifications = uniqueValues.map(parseGeneModification).filter(Boolean);
+    if (geneModifications.length > 0 && geneModifications.length >= uniqueValues.length * 0.5) {
+      const expansions = uniqueValues.map(v => {
+        const parsed = parseGeneModification(v);
+        return parsed ? `${parsed[0]}-${parsed[1]}` : v;
+      });
+      detectedGroups.push({
+        index: col, label: 'genotype', category: 'genotype', values: uniqueValues,
+        confidence: 'medium', expansions, method: 'gene-symbol',
+      });
+      usedIndices.add(col);
+    }
+  }
+
+  // Pass 4: Differential Token Analysis + Frequency Clustering
+  for (let col = 0; col < maxParts; col++) {
+    if (usedIndices.has(col)) continue;
+    const colValues = partMatrix.map(row => row[col]).filter(v => v !== '');
+    const uniqueValues = [...new Set(colValues)];
+
+    if (uniqueValues.length <= 1) continue;
+    if (uniqueValues.length >= sampleNames.length * 0.9) continue;
+    if (uniqueValues.every(isReplicateToken)) continue;
+    if (uniqueValues.every(isNoiseToken)) continue;
+
+    const freq = new Map<string, number>();
+    for (const v of colValues) {
+      freq.set(v, (freq.get(v) ?? 0) + 1);
+    }
+    const freqValues = [...freq.values()];
+    const isBalanced = freqValues.length >= 2 &&
+      Math.max(...freqValues) / Math.min(...freqValues) <= 3;
+
+    let confidence: 'high' | 'medium' | 'low' = 'low';
+    if (isBalanced && uniqueValues.length >= 2 && uniqueValues.length <= 6) {
+      confidence = 'medium';
+    }
+
+    const looksLikeCondition = uniqueValues.some(v =>
+      /^[a-zA-Z]{2,}[0-9]*$/.test(v) && !isReplicateToken(v),
+    );
+    if (looksLikeCondition) {
+      confidence = confidence === 'low' ? 'medium' : confidence;
+    }
+
+    detectedGroups.push({
+      index: col, label: `group_${col + 1}`, category: 'unknown',
+      values: uniqueValues, confidence, method: 'frequency',
+    });
+  }
+
+  if (detectedGroups.length === 0) return null;
+
+  const factorialStructure = validateFactorialStructure(detectedGroups, partMatrix);
+
+  return {
+    separator: bestSep,
+    groups: detectedGroups,
+    sampleCount: sampleNames.length,
+    sampleExamples: sampleNames.slice(0, 4),
+    noiseTokens: noiseTokens.length > 0 ? noiseTokens : undefined,
+    factorialStructure,
+  };
+}
+
+// ─── Whole-name analysis (no separator) ──────────────────────────────────
+
+function analyzeWholeNames(sampleNames: string[]): FileResult | null {
+  const lower = sampleNames.map(s => s.toLowerCase());
+  const groups: DetectedGroup[] = [];
+
+  for (const [category, pairs] of Object.entries(BIO_MAP)) {
+    const knownTokens = pairs.map(p => p[0]);
+    const matchingValues = [...new Set(lower)].filter(v =>
+      knownTokens.some(t => v.includes(t)),
+    );
+    if (matchingValues.length >= 2) {
+      const expansions = matchingValues.map(v => {
+        for (const [token, expansion] of pairs) {
+          if (v.includes(token)) return expansion;
+        }
+        return v;
+      });
+      groups.push({
+        label: category, category, values: matchingValues,
+        confidence: 'medium', expansions, method: 'vocabulary-substring',
+      });
+    }
+  }
+
+  const timepointMatches = [...new Set(lower)].filter(v =>
+    TIMEPOINT_PATTERNS.some(p => p.test(v)),
+  );
+  if (timepointMatches.length >= 2) {
+    groups.push({
+      label: 'timepoint', category: 'timepoint', values: timepointMatches,
+      confidence: 'high', method: 'pattern',
+    });
+  }
+
+  const geneMatches = sampleNames.filter(s => parseGeneModification(s) !== null);
+  if (geneMatches.length >= 2) {
+    const uniqueGene = [...new Set(geneMatches)];
+    groups.push({
+      label: 'genotype', category: 'genotype', values: uniqueGene,
+      confidence: 'medium',
+      expansions: uniqueGene.map(v => {
+        const parsed = parseGeneModification(v);
+        return parsed ? `${parsed[0]}-${parsed[1]}` : v;
+      }),
+      method: 'gene-symbol',
+    });
+  }
+
+  if (groups.length === 0) return null;
+  return {
+    groups,
+    sampleCount: sampleNames.length,
+    sampleExamples: sampleNames.slice(0, 4),
+  };
+}
+
+// ─── Factorial Structure Validation ─────────────────────────────────────
+
+function validateFactorialStructure(
+  groups: DetectedGroup[],
+  partMatrix: string[][],
+): string | undefined {
+  const indexedGroups = groups.filter(g => g.index !== undefined);
+  if (indexedGroups.length < 2) return undefined;
+
+  const combinations = new Set<string>();
+  for (const row of partMatrix) {
+    const combo = indexedGroups.map(g => row[g.index!]).join(' \u00D7 ');
+    combinations.add(combo);
+  }
+
+  let expectedCount = 1;
+  for (const g of indexedGroups) {
+    expectedCount *= g.values.length;
+  }
+
+  const observedCount = combinations.size;
+  const factorLabels = indexedGroups.map(g => `${g.label}(${g.values.length})`).join(' \u00D7 ');
+
+  if (observedCount === expectedCount) {
+    return `Full factorial design: ${factorLabels} = ${expectedCount} combinations (all present)`;
+  } else if (observedCount >= expectedCount * 0.7) {
+    return `Near-complete factorial: ${factorLabels} \u2014 ${observedCount}/${expectedCount} combinations observed`;
+  } else {
+    return `Partial factorial: ${factorLabels} \u2014 ${observedCount}/${expectedCount} combinations (some missing)`;
+  }
+}
+
+// ─── Report formatting ──────────────────────────────────────────────────
+
+function formatReport(
+  fileName: string,
+  result: FileResult,
+  language: 'python' | 'r',
+): string {
+  const lines: string[] = [];
+  lines.push(`\nFile "${fileName}" \u2014 ${result.sampleCount} samples (e.g. ${result.sampleExamples.join(', ')})`);
+
+  if (result.separator) {
+    lines.push(`  Separator: "${result.separator}"`);
+  }
+
+  if (result.noiseTokens && result.noiseTokens.length > 0) {
+    lines.push(`  Noise tokens (ignored): ${result.noiseTokens.join(', ')}`);
+  }
+
+  for (const g of result.groups) {
+    const posInfo = g.index !== undefined ? ` [position ${g.index + 1}]` : '';
+    const confIcon = g.confidence === 'high' ? '\u2713' : g.confidence === 'medium' ? '~' : '?';
+    const methodInfo = g.method !== 'vocabulary' ? ` (via ${g.method})` : '';
+
+    if (g.expansions && g.expansions.length > 0) {
+      const expanded = g.values.map((v, i) => `${v} (${g.expansions![i]})`).join(', ');
+      lines.push(`  ${confIcon} ${g.label}: ${expanded}${posInfo}${methodInfo}`);
+    } else {
+      lines.push(`  ${confIcon} ${g.label}: ${g.values.join(', ')}${posInfo}${methodInfo}`);
+    }
+  }
+
+  if (result.factorialStructure) {
+    lines.push(`  Design: ${result.factorialStructure}`);
+  }
+
+  if (result.separator) {
+    if (language === 'r') {
+      const fixedArg = result.separator !== '.' ? 'TRUE' : 'FALSE';
+      const sepEsc = result.separator === '.' ? '\\\\.' : result.separator;
+      lines.push(`  Parsing hint (R): parts <- strsplit(colnames(df), "${sepEsc}", fixed=${fixedArg})`);
+    } else {
+      lines.push(`  Parsing hint (Python): parts = [c.split("${result.separator}") for c in df.columns]`);
+    }
+
+    const slotMap = result.groups
+      .filter(g => g.index !== undefined)
+      .map(g => `position ${g.index! + 1} \u2192 ${g.label}`)
+      .join(', ');
+    if (slotMap) {
+      lines.push(`  Slot mapping: ${slotMap}`);
+    }
+  }
+
+  return lines.join('\n');
+}

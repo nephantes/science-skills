@@ -1,0 +1,34 @@
+{
+  "id": "survival-analysis",
+  "name": "Survival / Kaplan-Meier Analysis",
+  "description": "Kaplan-Meier curves and Cox proportional hazards modeling",
+  "type": "template",
+  "version": "1.0.0",
+  "tags": [
+    "survival-analysis",
+    "clinical-trials",
+    "kaplan-meier"
+  ],
+  "languages": [
+    "python"
+  ],
+  "priority": 5,
+  "capabilities": {
+    "inspectFiles": false,
+    "providesTools": false,
+    "validatesOutput": false,
+    "providesTemplate": true,
+    "modifiesSystemPrompt": false
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "enabled": true,
+  "visibility": "builtin",
+  "createdAt": "2026-03-08T20:47:54.759Z",
+  "updatedAt": "2026-03-09T01:18:57.631Z",
+  "payload": {
+    "type": "template",
+    "codeFile": "code.py",
+    "guidanceFile": "guidance.md"
+  }
+}
