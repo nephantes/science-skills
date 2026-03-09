@@ -1,0 +1,30 @@
+{
+  "skillId": "pydeseq2-differential-expression",
+  "status": "completed",
+  "stdout": "Using None as control genes, passed at DeseqDataSet initialization\nLog2 fold change & Wald test p-value: condition control vs treatment\n           baseMean  log2FoldChange  ...         pvalue           padj\ngene                                 ...                              \nBRCA1    631.450701       -2.166523  ...   1.507497e-13   1.674997e-13\nTP53     894.286001       -3.587063  ...   2.417353e-25   4.395187e-25\nEGFR    1036.269532       -2.058051  ...   1.602442e-29   3.560983e-29\nMYC     1038.262781       -3.320564  ...   6.290042e-46   2.516017e-45\nKRAS     646.385216       -1.055009  ...   1.275658e-08   1.275658e-08\nPIK3CA   583.306241       -2.900956  ...   1.175358e-21   1.808243e-21\nPTEN     753.917207       -1.321042  ...   4.981874e-23   8.303123e-23\nRB1      555.906329       -2.602882  ...   1.506910e-71   1.004607e-70\nAPC      643.328414       -1.053830  ...   3.074135e-14   3.842668e-14\nBRAF     813.192496       -1.698700  ...   7.136945e-40   2.378982e-39\nCDH1     767.799610        1.757220  ...   1.295148e-50   6.475741e-50\nCTNNB1  1040.758069        3.683448  ...   1.189191e-28   2.378383e-28\nERBB2    673.337913        2.938141  ...   3.140769e-15   4.187692e-15\nFGFR1   1195.992544        2.451651  ...   5.171571e-32   1.477592e-31\nIDH1     856.590274        2.772402  ...   5.989873e-18   8.556961e-18\nJAK2    1091.879195        3.261780  ...  6.010039e-274  1.202008e-272\nKIT      702.546681        0.906881  ...   3.313069e-13   3.487441e-13\nMAP2K1   847.679612        1.578036  ...   4.447007e-14   5.231773e-14\nNRAS     707.650028        3.718381  ...   6.560976e-31   1.640244e-30\nVHL      605.181815        2.967484  ...  1.436476e-134  1.436476e-133\n\n[20 rows x 6 columns]\nSignificant genes (padj < 0.05): 20\nTotal genes tested: 20",
+  "stderr": "Fitting size factors...\n... done in 0.00 seconds.\n\nFitting dispersions...\n... done in 0.01 seconds.\n\nFitting dispersion trend curve...\n... done in 0.01 seconds.\n\nFitting MAP dispersions...\n... done in 0.06 seconds.\n\nFitting LFCs...\n... done in 0.01 seconds.\n\nCalculating cook's distance...\n... done in 0.00 seconds.\n\nReplacing 0 outlier genes.\n\nRunning Wald tests...\n... done in 0.01 seconds.\n\n",
+  "exitCode": 0,
+  "durationMs": 15855,
+  "language": "python",
+  "generatedAt": "2026-03-08T22:56:39.803Z",
+  "inputFiles": [
+    {
+      "name": "counts.csv",
+      "description": "Raw count matrix (20 genes x 6 samples)",
+      "sizeBytes": 691
+    },
+    {
+      "name": "sample_metadata.csv",
+      "description": "Sample metadata with condition labels",
+      "sizeBytes": 130
+    }
+  ],
+  "outputFiles": [
+    {
+      "name": "de_results.csv",
+      "ext": "csv",
+      "sizeBytes": 2576,
+      "mimeType": "text/csv"
+    }
+  ]
+}

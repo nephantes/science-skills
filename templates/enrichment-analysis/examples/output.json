@@ -1,0 +1,18 @@
+{
+  "skillId": "enrichment-analysis",
+  "status": "completed",
+  "stdout": "Significant genes: 30 / 113\ngseapy not available — falling back to manual Fisher test\nGSEA skipped: No module named 'gseapy'",
+  "stderr": "",
+  "exitCode": 0,
+  "durationMs": 2025,
+  "language": "python",
+  "generatedAt": "2026-03-08T22:51:39.314Z",
+  "inputFiles": [
+    {
+      "name": "de_results.csv",
+      "description": "Differential expression results (100 genes)",
+      "sizeBytes": 5384
+    }
+  ],
+  "outputFiles": []
+}
