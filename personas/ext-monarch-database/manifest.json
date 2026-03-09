@@ -1,0 +1,38 @@
+{
+  "id": "ext-monarch-database",
+  "name": "Monarch Database",
+  "description": "Query the Monarch Initiative knowledge graph for disease-gene-phenotype associations across species. Integrates OMIM, ORPHANET, HPO, ClinVar, and model organism databases. Use for rare disease gene discovery, phenotype-to-gene mapping, cross-species disease modeling, and HPO term lookup.",
+  "type": "persona",
+  "version": "1.0.0",
+  "tags": [
+    "genomics",
+    "clinical",
+    "database",
+    "monarch-database"
+  ],
+  "languages": [
+    "python"
+  ],
+  "priority": 3,
+  "capabilities": {
+    "providesTemplate": false,
+    "modifiesSystemPrompt": true,
+    "inspectFiles": false,
+    "validatesOutput": false,
+    "providesTools": false
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "createdAt": "2026-03-09T03:47:17.818Z",
+  "updatedAt": "2026-03-09T03:47:17.818Z",
+  "author": "Kuan-lin Huang",
+  "enabled": true,
+  "visibility": "shared",
+  "source": "third-party",
+  "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
+  "sourceSkillName": "monarch-database",
+  "payload": {
+    "type": "persona",
+    "promptFile": "prompt.md"
+  }
+}
