@@ -1,0 +1,38 @@
+{
+  "id": "ext-clinicaltrials-database",
+  "name": "Clinicaltrials Database",
+  "description": "Query ClinicalTrials.gov via API v2. Search trials by condition, drug, location, status, or phase. Retrieve trial details by NCT ID, export data, for clinical research and patient matching.",
+  "type": "persona",
+  "version": "1.0.0",
+  "tags": [
+    "chemistry",
+    "clinical",
+    "database",
+    "clinicaltrials-database"
+  ],
+  "languages": [
+    "python"
+  ],
+  "priority": 3,
+  "capabilities": {
+    "providesTemplate": false,
+    "modifiesSystemPrompt": true,
+    "inspectFiles": false,
+    "validatesOutput": false,
+    "providesTools": false
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "createdAt": "2026-03-09T03:47:17.800Z",
+  "updatedAt": "2026-03-09T03:47:17.800Z",
+  "author": "K-Dense Inc.",
+  "enabled": true,
+  "visibility": "shared",
+  "source": "third-party",
+  "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
+  "sourceSkillName": "clinicaltrials-database",
+  "payload": {
+    "type": "persona",
+    "promptFile": "prompt.md"
+  }
+}
