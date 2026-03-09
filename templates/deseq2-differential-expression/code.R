@@ -1,7 +1,11 @@
-library(DESeq2)
+suppressPackageStartupMessages(library(DESeq2))
 library(tibble)
 
-counts <- read.csv("counts.csv", row.names = 1)
+counts_raw <- read.csv("counts.csv", check.names = FALSE)
+ids <- make.unique(as.character(counts_raw[[1]]), sep = "_")
+counts <- counts_raw[, -1, drop = FALSE]
+rownames(counts) <- ids
+
 meta <- read.csv("sample_metadata.csv")
 meta$condition <- factor(meta$condition)
 
