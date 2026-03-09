@@ -23,18 +23,10 @@
   },
   "inputSchema": [],
   "outputSchema": [],
-  "gitMeta": {
-    "sha": "ae23e24f9044dd79d44b4b2105a3c38dc2d94608",
-    "author": "ViaScience",
-    "branch": "main",
-    "message": "Update DESeq2 Differential Expression to v1.0.0",
-    "shortSha": "ae23e2",
-    "committedAt": "2026-03-09T01:48:52Z"
-  },
   "enabled": true,
   "visibility": "builtin",
   "createdAt": "2026-03-08T20:47:54.755Z",
-  "updatedAt": "2026-03-09T01:48:52.618Z",
+  "updatedAt": "2026-03-09T02:09:16.118Z",
   "payload": {
     "type": "template",
     "codeFile": "code.R",
