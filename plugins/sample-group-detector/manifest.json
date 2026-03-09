@@ -24,7 +24,7 @@
   "visibility": "builtin",
   "source": "platform",
   "createdAt": "2026-03-08T20:47:54.759Z",
-  "updatedAt": "2026-03-09T19:44:05.718Z",
+  "updatedAt": "2026-03-09T19:59:18.053Z",
   "payload": {
     "type": "plugin",
     "moduleRef": "@builtin/sample-group-detector"

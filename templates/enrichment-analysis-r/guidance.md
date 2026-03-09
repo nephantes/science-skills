@@ -1,0 +1,13 @@
+When performing functional enrichment in R:
+- Use clusterProfiler::enrichKEGG for KEGG pathway enrichment (ORA)
+- Use clusterProfiler::enrichGO for GO enrichment (requires OrgDb annotation package)
+- For KEGG: specify organism code (e.g., "hsa" for human, "mmu" for mouse, "pau" for P. aeruginosa)
+- Gene lists can come from DE results: filter by |log2FC| > threshold and padj < 0.05
+- enrichKEGG fetches pathway-gene mappings from KEGG REST API (requires internet)
+- Use pvalueCutoff and qvalueCutoff parameters to control significance thresholds
+- For simplifying GO terms: clusterProfiler::simplify(result, cutoff = 0.7)
+- Input gene IDs must match the KEGG/OrgDb format (e.g., Entrez IDs, locus tags)
+- RDS files from DESeq2 can be loaded with readRDS() — they contain DESeqResults objects
+- Compare enrichment across conditions by running enrichKEGG separately, then intersecting Description
+- Count column shows number of genes in the enriched pathway from your gene list
+- geneID column contains "/" separated gene IDs contributing to each enrichment term

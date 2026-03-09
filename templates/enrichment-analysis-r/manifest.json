@@ -1,20 +1,20 @@
 {
-  "id": "methylation-analysis",
-  "name": "Methylation / Epigenomics Analysis",
-  "description": "CpG density analysis, methylation filtering, chromosomal distribution, and chi-square genomic tests",
+  "id": "enrichment-analysis-r",
+  "name": "Functional Enrichment Analysis (R)",
+  "description": "KEGG/GO pathway enrichment using clusterProfiler in R with over-representation analysis",
   "type": "template",
   "version": "1.0.0",
   "tags": [
-    "epigenomics",
-    "methylation",
-    "cpg",
+    "pathway-analysis",
+    "enrichment",
+    "gene-ontology",
     "genomics",
-    "chi-square"
+    "kegg"
   ],
   "languages": [
-    "python"
+    "r"
   ],
-  "priority": 8,
+  "priority": 5,
   "capabilities": {
     "inspectFiles": false,
     "providesTools": false,
@@ -27,11 +27,11 @@
   "enabled": true,
   "visibility": "builtin",
   "source": "platform",
-  "createdAt": "2026-03-09T19:44:05.718Z",
+  "createdAt": "2026-03-09T19:59:18.053Z",
   "updatedAt": "2026-03-09T19:59:18.053Z",
   "payload": {
     "type": "template",
-    "codeFile": "code.py",
+    "codeFile": "code.R",
     "guidanceFile": "guidance.md"
   }
 }
