@@ -1,0 +1,40 @@
+{
+  "id": "ext-molecular-dynamics",
+  "name": "Molecular Dynamics",
+  "description": "Run and analyze molecular dynamics simulations with OpenMM and MDAnalysis. Set up protein/small molecule systems, define force fields, run energy minimization and production MD, analyze trajectories (RMSD, RMSF, contact maps, free energy surfaces). For structural biology, drug binding, and biophysics.",
+  "type": "persona",
+  "version": "1.0.0",
+  "tags": [
+    "chemistry",
+    "writing",
+    "mathematics",
+    "proteomics",
+    "database",
+    "molecular-dynamics"
+  ],
+  "languages": [
+    "python"
+  ],
+  "priority": 3,
+  "capabilities": {
+    "providesTemplate": false,
+    "modifiesSystemPrompt": true,
+    "inspectFiles": false,
+    "validatesOutput": false,
+    "providesTools": false
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "createdAt": "2026-03-09T03:47:17.817Z",
+  "updatedAt": "2026-03-09T03:47:17.817Z",
+  "author": "Kuan-lin Huang",
+  "enabled": true,
+  "visibility": "shared",
+  "source": "third-party",
+  "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
+  "sourceSkillName": "molecular-dynamics",
+  "payload": {
+    "type": "persona",
+    "promptFile": "prompt.md"
+  }
+}
