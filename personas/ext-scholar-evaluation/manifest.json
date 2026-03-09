@@ -1,0 +1,41 @@
+{
+  "id": "ext-scholar-evaluation",
+  "name": "Scholar Evaluation",
+  "description": "Systematically evaluate scholarly work using the ScholarEval framework, providing structured assessment across research quality dimensions including problem formulation, methodology, analysis, and writing with quantitative scoring and actionable feedback.",
+  "type": "persona",
+  "version": "1.0.0",
+  "tags": [
+    "genomics",
+    "data-analysis",
+    "visualization",
+    "writing",
+    "imaging",
+    "database",
+    "scholar-evaluation"
+  ],
+  "languages": [
+    "python"
+  ],
+  "priority": 3,
+  "capabilities": {
+    "providesTemplate": false,
+    "modifiesSystemPrompt": true,
+    "inspectFiles": false,
+    "validatesOutput": false,
+    "providesTools": false
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "createdAt": "2026-03-09T03:47:17.829Z",
+  "updatedAt": "2026-03-09T03:47:17.829Z",
+  "author": "K-Dense Inc.",
+  "enabled": true,
+  "visibility": "shared",
+  "source": "third-party",
+  "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
+  "sourceSkillName": "scholar-evaluation",
+  "payload": {
+    "type": "persona",
+    "promptFile": "prompt.md"
+  }
+}
