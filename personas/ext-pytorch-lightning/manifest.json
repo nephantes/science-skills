@@ -1,0 +1,36 @@
+{
+  "id": "ext-pytorch-lightning",
+  "name": "Pytorch Lightning",
+  "description": "Deep learning framework (PyTorch Lightning). Organize PyTorch code into LightningModules, configure Trainers for multi-GPU/TPU, implement data pipelines, callbacks, logging (W&B, TensorBoard), distributed training (DDP, FSDP, DeepSpeed), for scalable neural network training.",
+  "type": "persona",
+  "version": "1.0.0",
+  "tags": [
+    "machine-learning",
+    "pytorch-lightning"
+  ],
+  "languages": [
+    "python"
+  ],
+  "priority": 3,
+  "capabilities": {
+    "providesTemplate": false,
+    "modifiesSystemPrompt": true,
+    "inspectFiles": false,
+    "validatesOutput": false,
+    "providesTools": false
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "createdAt": "2026-03-09T03:47:17.827Z",
+  "updatedAt": "2026-03-09T03:47:17.827Z",
+  "author": "K-Dense Inc.",
+  "enabled": true,
+  "visibility": "shared",
+  "source": "third-party",
+  "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
+  "sourceSkillName": "pytorch-lightning",
+  "payload": {
+    "type": "persona",
+    "promptFile": "prompt.md"
+  }
+}
