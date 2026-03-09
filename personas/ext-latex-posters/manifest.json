@@ -1,0 +1,39 @@
+{
+  "id": "ext-latex-posters",
+  "name": "Latex Posters",
+  "description": "Create professional research posters in LaTeX using beamerposter, tikzposter, or baposter. Support for conference presentations, academic posters, and scientific communication. Includes layout design, color schemes, multi-column formats, figure integration, and poster-specific best practices for visual communication.",
+  "type": "persona",
+  "version": "1.0.0",
+  "tags": [
+    "genomics",
+    "writing",
+    "mathematics",
+    "imaging",
+    "database",
+    "latex-posters"
+  ],
+  "languages": [
+    "python"
+  ],
+  "priority": 3,
+  "capabilities": {
+    "providesTemplate": false,
+    "modifiesSystemPrompt": true,
+    "inspectFiles": false,
+    "validatesOutput": false,
+    "providesTools": false
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "createdAt": "2026-03-09T03:47:17.815Z",
+  "updatedAt": "2026-03-09T03:47:17.815Z",
+  "enabled": true,
+  "visibility": "shared",
+  "source": "third-party",
+  "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
+  "sourceSkillName": "latex-posters",
+  "payload": {
+    "type": "persona",
+    "promptFile": "prompt.md"
+  }
+}
