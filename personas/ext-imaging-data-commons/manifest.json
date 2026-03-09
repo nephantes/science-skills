@@ -1,0 +1,39 @@
+{
+  "id": "ext-imaging-data-commons",
+  "name": "Imaging Data Commons",
+  "description": "Query and download public cancer imaging data from NCI Imaging Data Commons using idc-index. Use for accessing large-scale radiology (CT, MR, PET) and pathology datasets for AI training or research. No authentication required. Query by metadata, visualize in browser, check licenses.",
+  "type": "persona",
+  "version": "1.4.0",
+  "tags": [
+    "data-analysis",
+    "clinical",
+    "imaging",
+    "database",
+    "imaging-data-commons"
+  ],
+  "languages": [
+    "python"
+  ],
+  "priority": 3,
+  "capabilities": {
+    "providesTemplate": false,
+    "modifiesSystemPrompt": true,
+    "inspectFiles": false,
+    "validatesOutput": false,
+    "providesTools": false
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "createdAt": "2026-03-09T03:47:17.813Z",
+  "updatedAt": "2026-03-09T03:47:17.813Z",
+  "author": "Andrey Fedorov, @fedorov",
+  "enabled": true,
+  "visibility": "shared",
+  "source": "third-party",
+  "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
+  "sourceSkillName": "imaging-data-commons",
+  "payload": {
+    "type": "persona",
+    "promptFile": "prompt.md"
+  }
+}
