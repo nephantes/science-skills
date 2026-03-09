@@ -1,0 +1,40 @@
+{
+  "id": "ext-interpro-database",
+  "name": "Interpro Database",
+  "description": "Query InterPro for protein family, domain, and functional site annotations. Integrates Pfam, PANTHER, PRINTS, SMART, SUPERFAMILY, and 11 other member databases. Use for protein function prediction, domain architecture analysis, evolutionary classification, and GO term mapping.",
+  "type": "persona",
+  "version": "1.0.0",
+  "tags": [
+    "genomics",
+    "machine-learning",
+    "proteomics",
+    "database",
+    "pathway-analysis",
+    "interpro-database"
+  ],
+  "languages": [
+    "python"
+  ],
+  "priority": 3,
+  "capabilities": {
+    "providesTemplate": false,
+    "modifiesSystemPrompt": true,
+    "inspectFiles": false,
+    "validatesOutput": false,
+    "providesTools": false
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "createdAt": "2026-03-09T03:47:17.813Z",
+  "updatedAt": "2026-03-09T03:47:17.813Z",
+  "author": "Kuan-lin Huang",
+  "enabled": true,
+  "visibility": "shared",
+  "source": "third-party",
+  "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
+  "sourceSkillName": "interpro-database",
+  "payload": {
+    "type": "persona",
+    "promptFile": "prompt.md"
+  }
+}
