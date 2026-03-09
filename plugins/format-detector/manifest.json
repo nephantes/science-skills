@@ -24,7 +24,7 @@
   "visibility": "builtin",
   "source": "platform",
   "createdAt": "2026-03-08T20:47:54.759Z",
-  "updatedAt": "2026-03-09T05:35:05.613Z",
+  "updatedAt": "2026-03-09T05:45:56.818Z",
   "payload": {
     "type": "plugin",
     "moduleRef": "@builtin/format-detector"
