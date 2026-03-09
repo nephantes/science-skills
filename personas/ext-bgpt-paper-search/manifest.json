@@ -1,0 +1,39 @@
+{
+  "id": "ext-bgpt-paper-search",
+  "name": "Bgpt Paper Search",
+  "description": "Search scientific papers and retrieve structured experimental data extracted from full-text studies via the BGPT MCP server. Returns 25+ fields per paper including methods, results, sample sizes, quality scores, and conclusions. Use for literature reviews, evidence synthesis, and finding experimental details not available in abstracts alone.",
+  "type": "persona",
+  "version": "1.0.0",
+  "tags": [
+    "genomics",
+    "clinical",
+    "writing",
+    "database",
+    "bgpt-paper-search"
+  ],
+  "languages": [
+    "python"
+  ],
+  "priority": 3,
+  "capabilities": {
+    "providesTemplate": false,
+    "modifiesSystemPrompt": true,
+    "inspectFiles": false,
+    "validatesOutput": false,
+    "providesTools": false
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "createdAt": "2026-03-09T03:47:17.797Z",
+  "updatedAt": "2026-03-09T03:47:17.797Z",
+  "author": "BGPT",
+  "enabled": true,
+  "visibility": "shared",
+  "source": "third-party",
+  "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
+  "sourceSkillName": "bgpt-paper-search",
+  "payload": {
+    "type": "persona",
+    "promptFile": "prompt.md"
+  }
+}
