@@ -1,0 +1,41 @@
+{
+  "id": "ext-cellxgene-census",
+  "name": "Cellxgene Census",
+  "description": "Query the CELLxGENE Census (61M+ cells) programmatically. Use when you need expression data across tissues, diseases, or cell types from the largest curated single-cell atlas. Best for population-scale queries, reference atlas comparisons. For analyzing your own data use scanpy or scvi-tools.",
+  "type": "persona",
+  "version": "1.0.0",
+  "tags": [
+    "genomics",
+    "statistics",
+    "machine-learning",
+    "data-analysis",
+    "database",
+    "single-cell",
+    "cellxgene-census"
+  ],
+  "languages": [
+    "python"
+  ],
+  "priority": 3,
+  "capabilities": {
+    "providesTemplate": false,
+    "modifiesSystemPrompt": true,
+    "inspectFiles": false,
+    "validatesOutput": false,
+    "providesTools": false
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "createdAt": "2026-03-09T03:47:17.799Z",
+  "updatedAt": "2026-03-09T03:47:17.799Z",
+  "author": "K-Dense Inc.",
+  "enabled": true,
+  "visibility": "shared",
+  "source": "third-party",
+  "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
+  "sourceSkillName": "cellxgene-census",
+  "payload": {
+    "type": "persona",
+    "promptFile": "prompt.md"
+  }
+}
