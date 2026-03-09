@@ -1,25 +1,36 @@
 {
   "id": "r",
   "name": "R",
-  "description": "Sets rule for R usage",
+  "description": "Sets rule for R",
   "type": "persona",
   "version": "1.0.0",
   "tags": [],
-  "languages": [],
+  "languages": [
+    "r"
+  ],
   "priority": 0,
   "capabilities": {
-    "providesTemplate": false,
-    "modifiesSystemPrompt": true,
     "inspectFiles": false,
+    "providesTools": false,
     "validatesOutput": false,
-    "providesTools": false
+    "providesTemplate": false,
+    "modifiesSystemPrompt": true
   },
   "inputSchema": [],
   "outputSchema": [],
-  "createdAt": "2026-03-09T04:15:17.519Z",
-  "updatedAt": "2026-03-09T04:15:17.519Z",
+  "gitMeta": {
+    "sha": "7bfacc1e92363fb1b22a99a9254415884534dd45",
+    "author": "ViaScience",
+    "branch": "main",
+    "message": "Add skill: R v1.0.0",
+    "shortSha": "7bfacc",
+    "committedAt": "2026-03-09T04:15:17Z"
+  },
   "enabled": true,
   "visibility": "shared",
+  "source": "platform",
+  "createdAt": "2026-03-09T04:15:17.519Z",
+  "updatedAt": "2026-03-09T04:16:17.706Z",
   "payload": {
     "type": "persona",
     "promptFile": "prompt.md"
