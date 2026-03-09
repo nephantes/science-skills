@@ -1,0 +1,41 @@
+{
+  "id": "ext-dnanexus-integration",
+  "name": "Dnanexus Integration",
+  "description": "DNAnexus cloud genomics platform. Build apps/applets, manage data (upload/download), dxpy Python SDK, run workflows, FASTQ/BAM/VCF, for genomics pipeline development and execution.",
+  "type": "persona",
+  "version": "1.0.0",
+  "tags": [
+    "genomics",
+    "bioinformatics",
+    "data-analysis",
+    "clinical",
+    "writing",
+    "database",
+    "dnanexus-integration"
+  ],
+  "languages": [
+    "python"
+  ],
+  "priority": 3,
+  "capabilities": {
+    "providesTemplate": false,
+    "modifiesSystemPrompt": true,
+    "inspectFiles": false,
+    "validatesOutput": false,
+    "providesTools": false
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "createdAt": "2026-03-09T03:47:17.804Z",
+  "updatedAt": "2026-03-09T03:47:17.804Z",
+  "author": "K-Dense Inc.",
+  "enabled": true,
+  "visibility": "shared",
+  "source": "third-party",
+  "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
+  "sourceSkillName": "dnanexus-integration",
+  "payload": {
+    "type": "persona",
+    "promptFile": "prompt.md"
+  }
+}
