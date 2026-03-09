@@ -16,11 +16,11 @@
   ],
   "priority": 3,
   "capabilities": {
-    "inspectFiles": false,
-    "providesTools": false,
-    "validatesOutput": false,
     "providesTemplate": false,
-    "modifiesSystemPrompt": true
+    "modifiesSystemPrompt": true,
+    "inspectFiles": false,
+    "validatesOutput": false,
+    "providesTools": false
   },
   "inputSchema": [],
   "outputSchema": [],
@@ -30,8 +30,8 @@
   "source": "third-party",
   "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
   "sourceSkillName": "research-lookup",
-  "createdAt": "2026-03-09T03:47:17.828Z",
-  "updatedAt": "2026-03-09T03:47:17.828Z",
+  "createdAt": "2026-03-09T04:09:49.160Z",
+  "updatedAt": "2026-03-09T04:09:49.160Z",
   "payload": {
     "type": "persona",
     "promptFile": "prompt.md"
