@@ -1,0 +1,39 @@
+{
+  "id": "ext-scikit-survival",
+  "name": "Scikit Survival",
+  "description": "Comprehensive toolkit for survival analysis and time-to-event modeling in Python using scikit-survival. Use this skill when working with censored survival data, performing time-to-event analysis, fitting Cox models, Random Survival Forests, Gradient Boosting models, or Survival SVMs, evaluating survival predictions with concordance index or Brier score, handling competing risks, or implementing any survival analysis workflow with the scikit-survival library.",
+  "type": "persona",
+  "version": "1.0.0",
+  "tags": [
+    "statistics",
+    "machine-learning",
+    "chemistry",
+    "clinical",
+    "scikit-survival"
+  ],
+  "languages": [
+    "python"
+  ],
+  "priority": 3,
+  "capabilities": {
+    "providesTemplate": false,
+    "modifiesSystemPrompt": true,
+    "inspectFiles": false,
+    "validatesOutput": false,
+    "providesTools": false
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "createdAt": "2026-03-09T03:47:17.833Z",
+  "updatedAt": "2026-03-09T03:47:17.833Z",
+  "author": "K-Dense Inc.",
+  "enabled": true,
+  "visibility": "shared",
+  "source": "third-party",
+  "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
+  "sourceSkillName": "scikit-survival",
+  "payload": {
+    "type": "persona",
+    "promptFile": "prompt.md"
+  }
+}
