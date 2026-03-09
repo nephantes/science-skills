@@ -1,0 +1,40 @@
+{
+  "id": "ext-timesfm-forecasting",
+  "name": "Timesfm Forecasting",
+  "description": "Zero-shot time series forecasting with Google's TimesFM foundation model. Use for any univariate time series (sales, sensors, energy, vitals, weather) without training a custom model. Supports CSV/DataFrame/array inputs with point forecasts and prediction intervals. Includes a preflight system checker script to verify RAM/GPU before first use.",
+  "type": "persona",
+  "version": "1.0.0",
+  "tags": [
+    "statistics",
+    "machine-learning",
+    "data-analysis",
+    "visualization",
+    "database",
+    "timesfm-forecasting"
+  ],
+  "languages": [
+    "python"
+  ],
+  "priority": 3,
+  "capabilities": {
+    "providesTemplate": false,
+    "modifiesSystemPrompt": true,
+    "inspectFiles": false,
+    "validatesOutput": false,
+    "providesTools": false
+  },
+  "inputSchema": [],
+  "outputSchema": [],
+  "createdAt": "2026-03-09T03:47:17.836Z",
+  "updatedAt": "2026-03-09T03:47:17.836Z",
+  "author": "Clayton Young / Superior Byte Works, LLC (@borealBytes)",
+  "enabled": true,
+  "visibility": "shared",
+  "source": "third-party",
+  "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
+  "sourceSkillName": "timesfm-forecasting",
+  "payload": {
+    "type": "persona",
+    "promptFile": "prompt.md"
+  }
+}
