@@ -18,11 +18,11 @@
   ],
   "priority": 3,
   "capabilities": {
-    "inspectFiles": false,
-    "providesTools": false,
-    "validatesOutput": false,
     "providesTemplate": false,
-    "modifiesSystemPrompt": true
+    "modifiesSystemPrompt": true,
+    "inspectFiles": false,
+    "validatesOutput": false,
+    "providesTools": false
   },
   "inputSchema": [],
   "outputSchema": [],
@@ -32,8 +32,8 @@
   "source": "third-party",
   "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
   "sourceSkillName": "plotly",
-  "createdAt": "2026-03-09T03:47:17.822Z",
-  "updatedAt": "2026-03-09T04:17:57.032Z",
+  "createdAt": "2026-03-09T04:27:35.611Z",
+  "updatedAt": "2026-03-09T04:27:35.611Z",
   "payload": {
     "type": "persona",
     "promptFile": "prompt.md"
