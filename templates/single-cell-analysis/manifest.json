@@ -1,18 +1,20 @@
 {
-  "id": "survival-analysis-r",
-  "name": "Survival / Kaplan-Meier Analysis (R)",
-  "description": "Kaplan-Meier curves and Cox proportional hazards modeling in R",
+  "id": "single-cell-analysis",
+  "name": "Single-Cell RNA-seq Analysis",
+  "description": "Single-cell analysis with scanpy: h5ad loading, differential expression, cell type markers, GSEA",
   "type": "template",
   "version": "1.0.0",
   "tags": [
-    "survival-analysis",
-    "clinical-trials",
-    "kaplan-meier"
+    "single-cell",
+    "scanpy",
+    "rna-seq",
+    "differential-expression",
+    "genomics"
   ],
   "languages": [
-    "r"
+    "python"
   ],
-  "priority": 5,
+  "priority": 9,
   "capabilities": {
     "inspectFiles": false,
     "providesTools": false,
@@ -25,11 +27,11 @@
   "enabled": true,
   "visibility": "builtin",
   "source": "platform",
-  "createdAt": "2026-03-08T20:47:54.759Z",
+  "createdAt": "2026-03-10T02:31:42.018Z",
   "updatedAt": "2026-03-10T02:31:42.018Z",
   "payload": {
     "type": "template",
-    "codeFile": "code.R",
+    "codeFile": "code.py",
     "guidanceFile": "guidance.md"
   }
 }

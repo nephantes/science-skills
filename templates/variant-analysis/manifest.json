@@ -1,18 +1,20 @@
 {
-  "id": "survival-analysis-r",
-  "name": "Survival / Kaplan-Meier Analysis (R)",
-  "description": "Kaplan-Meier curves and Cox proportional hazards modeling in R",
+  "id": "variant-analysis",
+  "name": "Genomic Variant Analysis",
+  "description": "CHIP variant analysis: VAF distributions, mutation burden, Fisher/chi-square tests on VCF-derived data",
   "type": "template",
   "version": "1.0.0",
   "tags": [
-    "survival-analysis",
-    "clinical-trials",
-    "kaplan-meier"
+    "variant-analysis",
+    "genomics",
+    "vcf",
+    "chip",
+    "statistics"
   ],
   "languages": [
     "r"
   ],
-  "priority": 5,
+  "priority": 8,
   "capabilities": {
     "inspectFiles": false,
     "providesTools": false,
@@ -25,7 +27,7 @@
   "enabled": true,
   "visibility": "builtin",
   "source": "platform",
-  "createdAt": "2026-03-08T20:47:54.759Z",
+  "createdAt": "2026-03-10T02:31:42.018Z",
   "updatedAt": "2026-03-10T02:31:42.018Z",
   "payload": {
     "type": "template",

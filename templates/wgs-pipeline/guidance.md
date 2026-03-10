@@ -1,0 +1,16 @@
+When running a WGS variant calling pipeline:
+- Step 1 — Trimmomatic PE: trim adapters and low-quality bases from paired-end FASTQ
+  - Report input/surviving/discarded read counts from Trimmomatic log
+- Step 2 — BWA-MEM: align trimmed reads to reference genome
+  - Build index first: bwa index ref.fna
+  - Add read groups: @RG\tID:sample\tSM:sample\tPL:ILLUMINA
+  - Sort with samtools sort, index with samtools index
+- Step 3 — Coverage: samtools depth -a to compute average coverage
+- Step 4 — GATK HaplotypeCaller: call variants from BAM
+  - Index reference with samtools faidx
+  - Create sequence dictionary with gatk CreateSequenceDictionary
+- Step 5 — bcftools: filter and analyse variants
+  - bcftools stats for summary statistics
+  - bcftools query for extracting specific fields
+- Always use subprocess.run with check=True
+- Parse output files (VCF, stats) to answer specific questions
