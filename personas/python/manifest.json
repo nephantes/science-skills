@@ -19,18 +19,18 @@
   "inputSchema": [],
   "outputSchema": [],
   "gitMeta": {
-    "sha": "f4c35c3510718559b3bd0ba48f4407fe09c90f4a",
+    "sha": "ca307011ea6bda7ac9c789899ad6b647025461ed",
     "author": "ViaScience",
     "branch": "main",
-    "message": "Add skill: Python v1.0.0",
-    "shortSha": "f4c35c",
-    "committedAt": "2026-03-09T04:15:47Z"
+    "message": "Update Python to v1.0.0",
+    "shortSha": "ca3070",
+    "committedAt": "2026-03-09T20:16:09Z"
   },
   "enabled": true,
   "visibility": "shared",
   "source": "platform",
   "createdAt": "2026-03-09T04:15:47.633Z",
-  "updatedAt": "2026-03-09T20:16:09.002Z",
+  "updatedAt": "2026-03-09T20:16:09.277Z",
   "payload": {
     "type": "persona",
     "promptFile": "prompt.md"

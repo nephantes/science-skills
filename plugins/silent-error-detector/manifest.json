@@ -22,7 +22,7 @@
   "visibility": "builtin",
   "source": "platform",
   "createdAt": "2026-03-08T20:47:54.759Z",
-  "updatedAt": "2026-03-09T20:14:45.174Z",
+  "updatedAt": "2026-03-10T01:13:58.364Z",
   "payload": {
     "type": "plugin",
     "moduleRef": "@builtin/silent-error-detector"
