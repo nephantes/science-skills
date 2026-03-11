@@ -23,9 +23,10 @@
   "visibility": "builtin",
   "source": "platform",
   "createdAt": "2026-03-08T20:47:54.759Z",
-  "updatedAt": "2026-03-11T04:38:51.512Z",
+  "updatedAt": "2026-03-11T22:27:50.940Z",
   "payload": {
     "type": "validator",
-    "moduleRef": "@builtin/output-validator"
+    "moduleRef": "@builtin/output-validator",
+    "sourceCode": "import type { ValidatorParams, ValidatorResult } from '../types';\n\n/**\n * Output Validator — now a thin wrapper.\n *\n * All substantive checks (empty DataFrames, all-NaN, missing files based on\n * step title keywords) have been consolidated into `validateOutputContract()`\n * in `services/output-contract.ts` to eliminate duplicate [DIAG] parsing.\n *\n * This validator is kept as a no-op pass-through so existing skill registrations\n * don't break. The pipeline calls `validateOutputContract()` directly.\n */\nexport function validate(params: ValidatorParams): ValidatorResult {\n  // All checks now handled by validateOutputContract() in the pipeline.\n  // Returning pass to avoid duplicate issue reporting.\n  void params;\n  return { passed: true, issues: [] };\n}\n"
   }
 }
