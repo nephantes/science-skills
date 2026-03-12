@@ -131,6 +131,9 @@ const METADATA_NAMES = new Set([
   'metadata.csv', 'sample_info.csv', 'samples.csv', 'coldata.csv',
   'metadata.tsv', 'sample_info.tsv', 'samples.tsv', 'phenodata.csv',
   'sample_metadata.csv', 'sampleinfo.csv', 'clinical.csv', 'clinical.tsv',
+  // .txt variants
+  'metadata.txt', 'sample_info.txt', 'samples.txt', 'phenodata.txt',
+  'coldata.txt', 'samplesheet.txt', 'sample_metadata.txt',
 ]);
 
 function isReplicateToken(token: string): boolean {
@@ -160,13 +163,99 @@ interface FileResult {
 
 // ─── Main execute function ──────────────────────────────────────────────
 
+// ─── Metadata file inspector ──────────────────────────────────────────────
+
+function inspectMetadataFile(filePath: string, fileName: string, language: 'python' | 'r'): string {
+  try {
+    const fd = fs.openSync(filePath, 'r');
+    const buf = Buffer.alloc(8192);
+    const bytesRead = fs.readSync(fd, buf, 0, 8192, 0);
+    fs.closeSync(fd);
+    const content = buf.toString('utf-8', 0, bytesRead);
+    const rawLines = content.split('\n').filter(l => l.trim().length > 0);
+    if (rawLines.length < 2) {
+      return `\u2713 Metadata file "${fileName}" detected \u2014 use it directly for sample grouping.`;
+    }
+
+    const delim = (rawLines[0].match(/\t/g) ?? []).length > (rawLines[0].match(/,/g) ?? []).length ? '\t' : ',';
+    const sep = delim === '\t' ? '\\t' : ',';
+    const headers = rawLines[0].split(delim).map(h => h.trim().replace(/^["']|["']$/g, ''));
+    const dataRows = rawLines.slice(1, Math.min(rawLines.length, 35))
+      .map(l => l.split(delim).map(v => v.trim().replace(/^["']|["']$/g, '')));
+    const nSamples = dataRows.length;
+
+    // Identify sample ID column (first column, or column named sample/samples/id)
+    const sampleIdColNames = new Set(['sample', 'samples', 'id', 'sampleid', 'sample_id', 'samplename', 'sample_name']);
+    const sampleColIdx = headers.findIndex(h => sampleIdColNames.has(h.toLowerCase()));
+    const sampleColName = sampleColIdx >= 0 ? headers[sampleColIdx] : headers[0];
+
+    interface ColInfo { name: string; uniqueNonNA: number; naCount: number; values: string[] }
+    const colInfos: ColInfo[] = headers.map((h, i) => {
+      const vals = dataRows.map(r => r[i] ?? '').filter(v => v !== '');
+      const nonNA = vals.filter(v => v.toLowerCase() !== 'na' && v !== 'null' && v !== '');
+      return {
+        name: h,
+        uniqueNonNA: new Set(nonNA).size,
+        naCount: vals.length - nonNA.length,
+        values: [...new Set(nonNA)].slice(0, 10),
+      };
+    });
+
+    // Group columns: 2–15 unique non-NA values, <60% NA, not the sample ID column
+    const groupCols = colInfos
+      .filter(c =>
+        c.name !== sampleColName &&
+        c.uniqueNonNA >= 2 &&
+        c.uniqueNonNA <= 15 &&
+        c.naCount / nSamples <= 0.6,
+      )
+      // Sort: fewer NAs first, then more unique values (more granular groups preferred for DE)
+      .sort((a, b) => {
+        const naDiff = a.naCount - b.naCount;
+        if (naDiff !== 0) return naDiff;
+        return b.uniqueNonNA - a.uniqueNonNA;
+      });
+
+    if (groupCols.length === 0) {
+      return `\u2713 Metadata file "${fileName}" detected (${nSamples} samples) \u2014 use it directly for sample grouping. Sample column: "${sampleColName}".`;
+    }
+
+    const lines: string[] = [
+      `\u2713 Metadata file "${fileName}" detected (${nSamples} samples).`,
+      `  Read with: sep="${sep}". Sample column: "${sampleColName}".`,
+      `  Use this file for sample grouping \u2014 do NOT parse expression column names.`,
+      `  Group columns found:`,
+    ];
+
+    for (const c of groupCols) {
+      const naNote = c.naCount > 0 ? `, ${c.naCount} NA` : '';
+      const vals = c.values.slice(0, 8).join(', ');
+      lines.push(`    "${c.name}": ${c.uniqueNonNA} groups \u2014 ${vals}${c.values.length > 8 ? ', \u2026' : ''}${naNote}`);
+    }
+
+    const best = groupCols[0];
+    lines.push(`  \u2192 Recommended primary group column: "${best.name}" (${best.uniqueNonNA} groups: ${best.values.join(', ')})`);
+    lines.push(`  \u2192 In Step 1: read "${fileName}", rename "${sampleColName}" \u2192 "sample", use "${best.name}" as the group variable. Save sample_metadata.csv.`);
+
+    if (language === 'r') {
+      lines.push(`  R read: meta <- read.csv('${fileName}', sep='${sep === '\\t' ? '\\t' : ','}', stringsAsFactors=FALSE)`);
+    } else {
+      lines.push(`  Python read: meta = pd.read_csv('${fileName}', sep='${sep === '\\t' ? '\\t' : ','}')`);
+    }
+
+    return lines.join('\n');
+  } catch {
+    return `\u2713 Metadata file "${fileName}" detected \u2014 use it directly for sample grouping.`;
+  }
+}
+
 export async function execute(params: PluginParams): Promise<PluginResult> {
-  // Check if a metadata file is already attached
-  const hasMetadata = params.fileNames.some(f => METADATA_NAMES.has(f.toLowerCase()));
-  if (hasMetadata) {
-    return {
-      contextText: `\u2713 Metadata file detected among uploads \u2014 use it directly for sample grouping instead of parsing column names.`,
-    };
+  // Check if a metadata file is already attached — inspect it to identify group columns
+  const metaFileName = params.fileNames.find(f => METADATA_NAMES.has(f.toLowerCase()));
+  if (metaFileName) {
+    const metaPath = path.join(params.workDir, 'uploads', metaFileName);
+    const advice = inspectMetadataFile(metaPath, metaFileName, params.language);
+    return { contextText: advice };
   }
 
   if (params.fileNames.length === 0) {
