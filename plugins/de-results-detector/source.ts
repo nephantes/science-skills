@@ -86,6 +86,8 @@ interface DeFileInfo {
   comparisons: string[];
   prefixedComparisons: string[];
   nRows: number;
+  /** True when the fold-change column appears to be on a linear (not log2) scale */
+  isLinearScale: boolean;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -141,6 +143,43 @@ function readColumnValues(rows: string[][], colIdx: number, maxValues: number): 
   return [...seen];
 }
 
+/**
+ * Sample up to `maxSamples` numeric values from a column and determine
+ * whether the fold-change is on a linear (not log2) scale.
+ *
+ * Heuristics (in order of confidence):
+ *  1. If the column name already contains "log"/"ln"/"lfc"/"l2fc" → log scale (skip sampling).
+ *  2. If ANY sampled value is negative → log scale (linear FC can't be negative).
+ *  3. If all sampled values are positive AND the max > 50 → linear scale.
+ *  4. Otherwise → assume log scale (conservative; avoids false positives).
+ */
+function detectLinearScale(
+  rows: string[][],
+  colIdx: number,
+  colNameLower: string,
+  maxSamples = 50,
+): boolean {
+  // Fast path: name already tells us it's log
+  if (isLogScaleByName(colNameLower)) return false;
+
+  const nums: number[] = [];
+  for (const row of rows) {
+    if (nums.length >= maxSamples) break;
+    const raw = (row[colIdx] ?? '').trim().replace(/^["']|["']$/g, '');
+    if (!raw || raw.toLowerCase() === 'na' || raw.toLowerCase() === 'null') continue;
+    const n = parseFloat(raw);
+    if (isFinite(n)) nums.push(n);
+  }
+
+  if (nums.length === 0) return false;
+
+  const hasNegative = nums.some(n => n < 0);
+  if (hasNegative) return false; // log scale — negative values are expected
+
+  const maxVal = Math.max(...nums);
+  return maxVal > 50; // positive-only with large values → almost certainly linear
+}
+
 // ─── Main execute ──────────────────────────────────────────────────────────────
 
 export async function execute(params: PluginParams): Promise<PluginResult> {
@@ -185,6 +224,10 @@ export async function execute(params: PluginParams): Promise<PluginResult> {
     const padjCol = origHeaders[padjIdx];
     const nRows = rawLines.length - 1;
 
+    // Parse data rows once (up to 500 rows covers comparison detection + value sampling)
+    const dataRows = rawLines.slice(1, Math.min(rawLines.length, 500))
+      .map(l => l.split(delimiter));
+
     // Check for a comparison/contrast column (long format)
     const compIdx = headers.findIndex(h => COMPARISON_EXACT.has(h));
     let comparisonCol: string | null = null;
@@ -192,15 +235,16 @@ export async function execute(params: PluginParams): Promise<PluginResult> {
 
     if (compIdx !== -1) {
       comparisonCol = origHeaders[compIdx];
-      const dataRows = rawLines.slice(1, Math.min(rawLines.length, 500))
-        .map(l => l.split(delimiter));
       comparisons = readColumnValues(dataRows, compIdx, 20);
     }
 
     // Check for wide-format prefixed comparisons
     const prefixedComparisons = detectPrefixedComparisons(headers, origHeaders);
 
-    detected.push({ fileName, lfcCol, padjCol, comparisonCol, comparisons, prefixedComparisons, nRows });
+    // Detect whether the fold-change column is on a linear (not log2) scale
+    const isLinearScale = detectLinearScale(dataRows, lfcIdx, headers[lfcIdx]);
+
+    detected.push({ fileName, lfcCol, padjCol, comparisonCol, comparisons, prefixedComparisons, nRows, isLinearScale });
   }
 
   if (detected.length === 0) {
@@ -216,8 +260,15 @@ export async function execute(params: PluginParams): Promise<PluginResult> {
 
   for (const info of detected) {
     lines.push(`FILE: "${info.fileName}" (${info.nRows} rows)`);
-    lines.push(`  Fold-change column : "${info.lfcCol}"`);
+    lines.push(`  Fold-change column : "${info.lfcCol}"${info.isLinearScale ? ' ⚠️  LINEAR SCALE (needs log2 conversion)' : ''}`);
     lines.push(`  Adjusted p-value   : "${info.padjCol}"`);
+
+    if (info.isLinearScale) {
+      lines.push(`  ⚠️  LINEAR FC DETECTED: Convert before plotting:`);
+      lines.push(`    Python: df['log2FC'] = np.log2(df['${info.lfcCol}'].replace(0, np.nan))`);
+      lines.push(`    R:      df$log2FC <- log2(ifelse(df$\`${info.lfcCol}\` <= 0, NA, df$\`${info.lfcCol}\`))`);
+      lines.push(`    Use 'log2FC' for volcano x-axis. Drop rows where log2FC or padj is NA.`);
+    }
 
     if (info.comparisons.length > 0) {
       lines.push(`  Comparison column  : "${info.comparisonCol}" — ${info.comparisons.length} comparison(s):`);
@@ -240,6 +291,10 @@ export async function execute(params: PluginParams): Promise<PluginResult> {
   lines.push(`CRITICAL PLANNING RULES:`);
   lines.push(`1. DO NOT run DESeq2, edgeR, limma, pydeseq2, or any other DE tool — results already exist.`);
   lines.push(`2. Step 1 must load the DE results file and use "${detected[0].lfcCol}" / "${detected[0].padjCol}" directly.`);
+  lines.push(`   Always drop rows where LFC or padj is NA/NaN before plotting (na.omit / dropna).`);
+  if (detected[0].isLinearScale) {
+    lines.push(`   The fold-change column is LINEAR — convert to log2 first (see conversion instructions above).`);
+  }
 
   const multiComp = detected.find(d => d.comparisons.length > 1 || d.prefixedComparisons.length > 1);
   if (multiComp) {
