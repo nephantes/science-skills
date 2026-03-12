@@ -3,7 +3,7 @@
   "name": "PCA / Dimensionality Reduction",
   "description": "Principal component analysis with variance-filtered features",
   "type": "template",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "tags": [
     "pca",
     "dimensionality-reduction",
@@ -27,7 +27,7 @@
   "visibility": "builtin",
   "source": "platform",
   "createdAt": "2026-03-08T20:47:54.759Z",
-  "updatedAt": "2026-03-11T22:56:02.409Z",
+  "updatedAt": "2026-03-12T18:28:02.540Z",
   "payload": {
     "type": "template",
     "codeFile": "code.py",

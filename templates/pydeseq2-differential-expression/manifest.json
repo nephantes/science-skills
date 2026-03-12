@@ -3,7 +3,7 @@
   "name": "PyDESeq2 Differential Expression",
   "description": "RNA-seq differential expression workflow using PyDESeq2 in Python",
   "type": "template",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "tags": [
     "differential-expression",
     "rna-seq",
@@ -27,7 +27,7 @@
   "visibility": "builtin",
   "source": "platform",
   "createdAt": "2026-03-08T20:47:54.759Z",
-  "updatedAt": "2026-03-12T13:46:17.596Z",
+  "updatedAt": "2026-03-12T18:28:02.540Z",
   "payload": {
     "type": "template",
     "codeFile": "code.py",
