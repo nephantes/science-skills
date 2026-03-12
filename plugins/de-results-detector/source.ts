@@ -61,6 +61,14 @@ function isPadjColumn(h: string): boolean {
   return false;
 }
 
+/**
+ * Returns true if the column name already implies a log-scale fold change
+ * (i.e. it contains "log" or "ln" as a word component).
+ */
+function isLogScaleByName(h: string): boolean {
+  return /log/.test(h) || /\bln\b/.test(h) || h === 'lfc' || h === 'l2fc';
+}
+
 /** Comparison / contrast column names (exact, lowercased) */
 const COMPARISON_EXACT = new Set([
   'comparison', 'contrast', 'group_comparison', 'group_contrast',
