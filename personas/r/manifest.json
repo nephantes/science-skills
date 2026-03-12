@@ -26,7 +26,7 @@
     "shortSha": "0540d7",
     "committedAt": "2026-03-09T04:16:17Z"
   },
-  "enabled": true,
+  "enabled": false,
   "visibility": "shared",
   "source": "platform",
   "createdAt": "2026-03-09T04:15:17.519Z",

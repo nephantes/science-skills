@@ -26,7 +26,7 @@
     "shortSha": "ca3070",
     "committedAt": "2026-03-09T20:16:09Z"
   },
-  "enabled": true,
+  "enabled": false,
   "visibility": "shared",
   "source": "platform",
   "createdAt": "2026-03-09T04:15:47.633Z",
