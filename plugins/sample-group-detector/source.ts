@@ -515,20 +515,45 @@ function formatReport(
   }
 
   if (result.separator) {
-    if (language === 'r') {
-      const fixedArg = result.separator !== '.' ? 'TRUE' : 'FALSE';
-      const sepEsc = result.separator === '.' ? '\\\\.' : result.separator;
-      lines.push(`  Parsing hint (R): parts <- strsplit(colnames(df), "${sepEsc}", fixed=${fixedArg})`);
-    } else {
-      lines.push(`  Parsing hint (Python): parts = [c.split("${result.separator}") for c in df.columns]`);
-    }
+    const indexedGroups = result.groups.filter(g => g.index !== undefined);
+    const groupPositions = indexedGroups.map(g => g.index! + 1); // 1-based
 
-    const slotMap = result.groups
-      .filter(g => g.index !== undefined)
+    const slotMap = indexedGroups
       .map(g => `position ${g.index! + 1} \u2192 ${g.label}`)
       .join(', ');
     if (slotMap) {
-      lines.push(`  Slot mapping: ${slotMap}`);
+      lines.push(`  Slot mapping: ${slotMap} (replicate suffix excluded from group)`);
+    }
+
+    // Generate concrete extraction code — explicit enough that Claude cannot misread the separator
+    if (groupPositions.length > 0) {
+      const exampleGroup = result.sampleExamples[0]
+        .split(result.separator)
+        .filter((_, i) => groupPositions.includes(i + 1))
+        .join(result.separator);
+
+      if (language === 'r') {
+        const sepEsc = result.separator === '.' ? '\\\\.' : result.separator.replace(/[.*+?^${}()|[\]\\]/g, '\\\\$&');
+        const fixedArg = result.separator === '.' ? 'FALSE' : 'TRUE';
+        const posStr = groupPositions.length === 1
+          ? String(groupPositions[0])
+          : `c(${groupPositions.join(', ')})`;
+        lines.push(`  Group extraction (R) \u2014 USE THIS EXACT PATTERN:`);
+        lines.push(`    parts <- strsplit(colnames(df), "${sepEsc}", fixed=${fixedArg})`);
+        lines.push(`    group <- sapply(parts, function(x) paste(x[${posStr}], collapse="${result.separator}"))`);
+        lines.push(`    # "${result.sampleExamples[0]}" \u2192 "${exampleGroup}"`);
+      } else {
+        const sep = result.separator;
+        const pyIndices = groupPositions.map(p => p - 1); // 0-based
+        const posStr = pyIndices.length === 1 ? String(pyIndices[0]) : `[${pyIndices.join(', ')}]`;
+        const sliceExpr = pyIndices.length === 1
+          ? `parts[${posStr}]`
+          : `[parts[i] for i in ${posStr}]`;
+        lines.push(`  Group extraction (Python) \u2014 USE THIS EXACT PATTERN:`);
+        lines.push(`    parts_list = [c.split('${sep}') for c in df.columns]`);
+        lines.push(`    group = ['${sep}'.join(${sliceExpr.replace('parts', 'p')}) for p in parts_list]`);
+        lines.push(`    # "${result.sampleExamples[0]}" \u2192 "${exampleGroup}"`);
+      }
     }
   }
 
