@@ -233,9 +233,23 @@ function inspectMetadataFile(filePath: string, fileName: string, language: 'pyth
       lines.push(`    "${c.name}": ${c.uniqueNonNA} groups \u2014 ${vals}${c.values.length > 8 ? ', \u2026' : ''}${naNote}`);
     }
 
-    const best = groupCols[0];
-    lines.push(`  \u2192 Recommended primary group column: "${best.name}" (${best.uniqueNonNA} groups: ${best.values.join(', ')})`);
-    lines.push(`  \u2192 In Step 1: read "${fileName}", rename "${sampleColName}" \u2192 "sample", use "${best.name}" as the group variable. Save sample_metadata.csv.`);
+    if (groupCols.length >= 2) {
+      // Multiple group columns — advise merging into one combined group
+      const colNames = groupCols.map(c => `"${c.name}"`).join(', ');
+      lines.push(`  GROUP MERGING RULE: Multiple group columns detected (${colNames}). For differential expression, ALWAYS merge them into a SINGLE combined "group" column.`);
+      if (language === 'r') {
+        const pasteArgs = groupCols.map(c => `meta$${c.name}`).join(', ');
+        lines.push(`  → meta$group <- paste(${pasteArgs}, sep="_")`);
+      } else {
+        const concatArgs = groupCols.map(c => `meta['${c.name}']`).join(` + '_' + `);
+        lines.push(`  → meta['group'] = ${concatArgs}`);
+      }
+      lines.push(`  Use this merged "group" for DESeq2 design and all pairwise comparisons. Only keep groups separate if the user explicitly asks for it.`);
+    } else {
+      const best = groupCols[0];
+      lines.push(`  \u2192 Recommended primary group column: "${best.name}" (${best.uniqueNonNA} groups: ${best.values.join(', ')})`);
+    }
+    lines.push(`  \u2192 In Step 1: read "${fileName}", rename "${sampleColName}" \u2192 "sample", save sample_metadata.csv.`);
 
     if (language === 'r') {
       lines.push(`  R read: meta <- read.csv('${fileName}', sep='${sep === '\\t' ? '\\t' : ','}', stringsAsFactors=FALSE)`);
@@ -299,6 +313,24 @@ export async function execute(params: PluginParams): Promise<PluginResult> {
     return { contextText: '', metadata };
   }
 
+  // Check if multiple non-replicate groups were detected across files
+  const allGroups = Object.values(metadata as Record<string, FileResult>)
+    .flatMap(r => r.groups)
+    .filter(g => g.category !== 'unknown' || g.values.length >= 2);
+  const namedGroupCount = allGroups.filter(g =>
+    g.category !== 'unknown' && g.category !== 'timepoint' && g.category !== 'dosage',
+  ).length;
+
+  const mergeAdvice = namedGroupCount >= 2
+    ? [
+        '',
+        `GROUP MERGING RULE: Multiple group variables were detected. For differential expression, ALWAYS merge them into a SINGLE combined group variable using paste() (R) or string concatenation (Python).`,
+        `For example, if genotype and diet are detected, create: group = paste(genotype, diet, sep="_") → "wt_chow", "ko_hfd", etc.`,
+        `Use this single merged "group" column for DESeq2 design (design = ~ group) and all pairwise comparisons.`,
+        `Only keep groups separate if the user explicitly asks to test individual factors or interactions.`,
+      ]
+    : [];
+
   const contextText = [
     `\uD83D\uDD0D SAMPLE GROUP DETECTION (no metadata file found):`,
     ...reports,
@@ -306,6 +338,7 @@ export async function execute(params: PluginParams): Promise<PluginResult> {
     `IMPORTANT: In Step 1, you MUST parse these groups from the column names and save them to sample_metadata.csv.`,
     `Do NOT hardcode group assignments \u2014 derive them programmatically from the sample names using the separator and positions shown above.`,
     `Include ALL detected variables as columns in sample_metadata.csv.`,
+    ...mergeAdvice,
   ].join('\n');
 
   return { contextText, metadata };
@@ -351,6 +384,10 @@ function analyzeSampleNames(sampleNames: string[], _language: 'python' | 'r'): F
   }
 
   // Pass 1: Controlled Vocabulary Matching
+  // Two thresholds: ≥50% match → high/medium confidence (strict),
+  // ≥1 match with remaining tokens as bio identifiers → medium/low (lenient).
+  // Lenient match catches e.g. genotype positions with gene names like [dbl, J1c, J2c, wt]
+  // where only "wt" is in the vocabulary but the position clearly represents genotype.
   for (let col = 0; col < maxParts; col++) {
     if (usedIndices.has(col)) continue;
     const colValues = partMatrix.map(row => row[col].toLowerCase());
@@ -361,6 +398,7 @@ function analyzeSampleNames(sampleNames: string[], _language: 'python' | 'r'): F
       const knownTokens = pairs.map(p => p[0]);
       const matchCount = uniqueValues.filter(v => knownTokens.includes(v)).length;
       if (matchCount > 0 && matchCount >= uniqueValues.length * 0.5) {
+        // Strict match: ≥50% tokens recognized
         const expansions = uniqueValues.map(v => {
           const entry = TOKEN_LOOKUP.get(v);
           return entry ? entry[1] : v;
@@ -369,6 +407,28 @@ function analyzeSampleNames(sampleNames: string[], _language: 'python' | 'r'): F
           index: col, label: category, category, values: uniqueValues,
           confidence: matchCount === uniqueValues.length ? 'high' : 'medium',
           expansions, method: 'vocabulary',
+        });
+        usedIndices.add(col);
+        break;
+      } else if (
+        matchCount > 0 &&
+        uniqueValues.length >= 2 &&
+        uniqueValues.length <= 10 &&
+        // Remaining unmatched tokens must look like biological identifiers
+        // (alphanumeric, 2+ chars, not pure replicates or noise)
+        uniqueValues
+          .filter(v => !knownTokens.includes(v))
+          .every(v => /^[a-zA-Z][a-zA-Z0-9]{1,}$/.test(v) && !isReplicateToken(v) && !isNoiseToken(v))
+      ) {
+        // Lenient match: at least one known token + remaining look like bio IDs (e.g. gene names)
+        const expansions = uniqueValues.map(v => {
+          const entry = TOKEN_LOOKUP.get(v);
+          return entry ? entry[1] : v;
+        });
+        detectedGroups.push({
+          index: col, label: category, category, values: uniqueValues,
+          confidence: 'low',
+          expansions, method: 'vocabulary-partial',
         });
         usedIndices.add(col);
         break;
