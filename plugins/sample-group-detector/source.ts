@@ -236,7 +236,7 @@ function inspectMetadataFile(filePath: string, fileName: string, language: 'pyth
     if (groupCols.length >= 2) {
       // Multiple group columns — advise merging into one combined group
       const colNames = groupCols.map(c => `"${c.name}"`).join(', ');
-      lines.push(`  GROUP MERGING RULE: Multiple group columns detected (${colNames}). For differential expression, ALWAYS merge them into a SINGLE combined "group" column.`);
+      lines.push(`  GROUP MERGING RULE: Multiple group columns detected (${colNames}). ALWAYS merge them into a SINGLE combined "group" column for ALL analyses (DE, PCA, clustering, heatmaps, enrichment, etc.).`);
       if (language === 'r') {
         const pasteArgs = groupCols.map(c => `meta$${c.name}`).join(', ');
         lines.push(`  → meta$group <- paste(${pasteArgs}, sep="_")`);
@@ -244,7 +244,7 @@ function inspectMetadataFile(filePath: string, fileName: string, language: 'pyth
         const concatArgs = groupCols.map(c => `meta['${c.name}']`).join(` + '_' + `);
         lines.push(`  → meta['group'] = ${concatArgs}`);
       }
-      lines.push(`  Use this merged "group" for DESeq2 design and all pairwise comparisons. Only keep groups separate if the user explicitly asks for it.`);
+      lines.push(`  Use this merged "group" for PCA coloring, DE design/contrasts, heatmap annotations, clustering, and any analysis needing sample groups. Only keep groups separate if the user explicitly asks.`);
     } else {
       const best = groupCols[0];
       lines.push(`  \u2192 Recommended primary group column: "${best.name}" (${best.uniqueNonNA} groups: ${best.values.join(', ')})`);
