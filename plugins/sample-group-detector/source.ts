@@ -324,9 +324,9 @@ export async function execute(params: PluginParams): Promise<PluginResult> {
   const mergeAdvice = namedGroupCount >= 2
     ? [
         '',
-        `GROUP MERGING RULE: Multiple group variables were detected. For differential expression, ALWAYS merge them into a SINGLE combined group variable using paste() (R) or string concatenation (Python).`,
+        `GROUP MERGING RULE: Multiple group variables were detected. ALWAYS merge them into a SINGLE combined "group" column using paste() (R) or string concatenation (Python).`,
         `For example, if genotype and diet are detected, create: group = paste(genotype, diet, sep="_") → "wt_chow", "ko_hfd", etc.`,
-        `Use this single merged "group" column for DESeq2 design (design = ~ group) and all pairwise comparisons.`,
+        `Use this single merged "group" column for ALL downstream analyses: PCA coloring, DE design/contrasts, heatmap annotations, clustering labels, enrichment, and any plot needing sample groups.`,
         `Only keep groups separate if the user explicitly asks to test individual factors or interactions.`,
       ]
     : [];
