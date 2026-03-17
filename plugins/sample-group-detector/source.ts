@@ -339,6 +339,8 @@ export async function execute(params: PluginParams): Promise<PluginResult> {
 
   const reports: string[] = [];
   const metadata: Record<string, unknown> = {};
+  // Track per-file detection results with sample names for CSV generation
+  const fileDetections: Array<{ sampleNames: string[]; result: FileResult }> = [];
 
   for (const fileName of params.fileNames) {
     const filePath = path.join(params.workDir, 'uploads', fileName);
@@ -367,11 +369,56 @@ export async function execute(params: PluginParams): Promise<PluginResult> {
     if (result && result.grouping.uniqueGroups.length > 0) {
       reports.push(formatReport(fileName, result, params.language));
       metadata[fileName] = result;
+      fileDetections.push({ sampleNames, result });
     }
   }
 
   if (reports.length === 0) {
     return { contextText: '', metadata };
+  }
+
+  // ─── Pre-generate sample_metadata.csv ──────────────────────────────────
+  // Write the metadata CSV directly so the model only needs to READ it, not create it.
+  // This makes the pipeline resilient to models that ignore separator/parsing instructions.
+  let metadataGenerated = false;
+  if (fileDetections.length > 0) {
+    try {
+      const det = fileDetections[0]; // Use first expression file's detection
+      const { sampleNames, result } = det;
+      const { separator, grouping, columnLabels } = result;
+
+      // Build per-sample metadata rows
+      const tokenized = sampleNames.map(s => s.split(separator));
+
+      // Determine column names: use detected category labels for group columns
+      const groupColLabels = grouping.groupColumns.map(colIdx => {
+        const label = columnLabels.find(l => l.position === colIdx);
+        return label && label.category !== 'unknown' ? label.category : `group_${colIdx + 1}`;
+      });
+
+      // Build CSV header: sample, <individual group vars>, group (merged)
+      const csvHeader = ['sample', ...groupColLabels, 'group'];
+      const csvRows = sampleNames.map((name, i) => {
+        const tokens = tokenized[i];
+        const groupVals = grouping.groupColumns.map(colIdx => tokens[colIdx] ?? '');
+        const mergedGroup = groupVals.join('_');
+        return [name, ...groupVals, mergedGroup]
+          .map(v => `"${v.replace(/"/g, '""')}"`)
+          .join(',');
+      });
+
+      const csvContent = [csvHeader.map(h => `"${h}"`).join(','), ...csvRows].join('\n');
+
+      // Write to results/ directory (Step 0 copies uploads/ to results/, but this is pre-Step 0)
+      const resultsDir = path.join(params.workDir, 'results');
+      if (!fs.existsSync(resultsDir)) fs.mkdirSync(resultsDir, { recursive: true });
+      fs.writeFileSync(path.join(resultsDir, 'sample_metadata.csv'), csvContent, 'utf-8');
+      // Also write to uploads/ so Step 0 can detect and copy it
+      fs.writeFileSync(path.join(params.workDir, 'uploads', 'sample_metadata.csv'), csvContent, 'utf-8');
+      metadataGenerated = true;
+    } catch {
+      // Non-fatal — fall back to model-generated metadata
+    }
   }
 
   // Check if multiple non-replicate group variables were detected
@@ -391,13 +438,25 @@ export async function execute(params: PluginParams): Promise<PluginResult> {
       ]
     : [];
 
+  const metadataNote = metadataGenerated
+    ? [
+        '',
+        `PRE-GENERATED METADATA: sample_metadata.csv has been created in the working directory with columns: sample, <detected group variables>, group (merged).`,
+        `In Step 1, you MUST read sample_metadata.csv directly — do NOT re-parse groups from column names.`,
+        `Read it with: ${params.language === 'r' ? "meta <- read.csv('sample_metadata.csv', stringsAsFactors=FALSE)" : "meta = pd.read_csv('sample_metadata.csv')"}`,
+        `The "group" column already contains the merged group label (e.g. "chow_wt", "hfd_ko"). Use it directly for all analyses.`,
+      ]
+    : [
+        '',
+        `IMPORTANT: In Step 1, you MUST parse these groups from the column names and save them to sample_metadata.csv.`,
+        `Do NOT hardcode group assignments \u2014 derive them programmatically from the sample names using the separator and positions shown above.`,
+        `Include ALL detected variables as columns in sample_metadata.csv.`,
+      ];
+
   const contextText = [
     `\uD83D\uDD0D SAMPLE GROUP DETECTION (no metadata file found):`,
     ...reports,
-    '',
-    `IMPORTANT: In Step 1, you MUST parse these groups from the column names and save them to sample_metadata.csv.`,
-    `Do NOT hardcode group assignments \u2014 derive them programmatically from the sample names using the separator and positions shown above.`,
-    `Include ALL detected variables as columns in sample_metadata.csv.`,
+    ...metadataNote,
     ...mergeAdvice,
   ].join('\n');
 
