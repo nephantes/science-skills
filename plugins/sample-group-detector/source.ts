@@ -682,15 +682,13 @@ function formatReport(
         .join(result.separator);
 
       if (language === 'r') {
-        const sepEsc = result.separator === '.' ? '\\\\.' : result.separator.replace(/[.*+?^${}()|[\]\\]/g, '\\\\$&');
-        const fixedArg = result.separator === '.' ? 'FALSE' : 'TRUE';
         const posStr = groupPositions.length === 1
           ? String(groupPositions[0])
           : `c(${groupPositions.join(', ')})`;
-        lines.push(`  Group extraction (R) \u2014 USE THIS EXACT PATTERN:`);
-        lines.push(`    parts <- strsplit(colnames(df), "${sepEsc}", fixed=${fixedArg})`);
+        lines.push(`  Group extraction (R) — USE THIS EXACT PATTERN:`);
+        lines.push(`    parts <- strsplit(sample_names, "${result.separator}", fixed=TRUE)`);
         lines.push(`    group <- sapply(parts, function(x) paste(x[${posStr}], collapse="${result.separator}"))`);
-        lines.push(`    # "${result.sampleExamples[0]}" \u2192 "${exampleGroup}"`);
+        lines.push(`    # "${result.sampleExamples[0]}" → "${exampleGroup}"`);
       } else {
         const sep = result.separator;
         const pyIndices = groupPositions.map(p => p - 1); // 0-based
