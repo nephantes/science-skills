@@ -33,7 +33,7 @@
   "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
   "sourceSkillName": "metabolomics-workbench-database",
   "createdAt": "2026-03-09T03:47:17.817Z",
-  "updatedAt": "2026-03-09T20:03:02.490Z",
+  "updatedAt": "2026-03-17T04:48:13.571Z",
   "payload": {
     "type": "persona",
     "promptFile": "prompt.md"

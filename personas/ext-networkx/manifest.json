@@ -31,7 +31,7 @@
   "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
   "sourceSkillName": "networkx",
   "createdAt": "2026-03-09T03:47:17.818Z",
-  "updatedAt": "2026-03-09T20:03:02.497Z",
+  "updatedAt": "2026-03-17T04:48:13.577Z",
   "payload": {
     "type": "persona",
     "promptFile": "prompt.md"

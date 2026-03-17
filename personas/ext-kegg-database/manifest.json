@@ -35,7 +35,7 @@
   "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
   "sourceSkillName": "kegg-database",
   "createdAt": "2026-03-09T03:47:17.814Z",
-  "updatedAt": "2026-03-09T20:03:02.461Z",
+  "updatedAt": "2026-03-17T04:48:13.521Z",
   "payload": {
     "type": "persona",
     "promptFile": "prompt.md"

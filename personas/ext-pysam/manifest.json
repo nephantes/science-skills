@@ -32,7 +32,7 @@
   "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
   "sourceSkillName": "pysam",
   "createdAt": "2026-03-09T03:47:17.826Z",
-  "updatedAt": "2026-03-09T20:03:02.577Z",
+  "updatedAt": "2026-03-17T04:48:13.624Z",
   "payload": {
     "type": "persona",
     "promptFile": "prompt.md"

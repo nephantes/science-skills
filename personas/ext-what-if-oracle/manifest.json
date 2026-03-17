@@ -29,7 +29,7 @@
   "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
   "sourceSkillName": "what-if-oracle",
   "createdAt": "2026-03-09T03:47:17.838Z",
-  "updatedAt": "2026-03-09T20:03:02.671Z",
+  "updatedAt": "2026-03-17T04:48:13.684Z",
   "payload": {
     "type": "persona",
     "promptFile": "prompt.md"

@@ -36,7 +36,7 @@
   "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
   "sourceSkillName": "exploratory-data-analysis",
   "createdAt": "2026-03-09T03:47:17.805Z",
-  "updatedAt": "2026-03-09T20:03:02.403Z",
+  "updatedAt": "2026-03-17T04:48:13.482Z",
   "payload": {
     "type": "persona",
     "promptFile": "prompt.md"

@@ -29,7 +29,7 @@
   "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
   "sourceSkillName": "zarr-python",
   "createdAt": "2026-03-09T03:47:17.839Z",
-  "updatedAt": "2026-03-09T20:03:02.675Z",
+  "updatedAt": "2026-03-17T04:48:13.687Z",
   "payload": {
     "type": "persona",
     "promptFile": "prompt.md"

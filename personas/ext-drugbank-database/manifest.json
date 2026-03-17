@@ -35,7 +35,7 @@
   "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
   "sourceSkillName": "drugbank-database",
   "createdAt": "2026-03-09T03:47:17.804Z",
-  "updatedAt": "2026-03-09T20:03:02.391Z",
+  "updatedAt": "2026-03-17T04:48:13.475Z",
   "payload": {
     "type": "persona",
     "promptFile": "prompt.md"

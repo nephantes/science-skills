@@ -30,7 +30,7 @@
   "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
   "sourceSkillName": "pennylane",
   "createdAt": "2026-03-09T03:47:17.822Z",
-  "updatedAt": "2026-03-09T20:03:02.530Z",
+  "updatedAt": "2026-03-17T04:48:13.598Z",
   "payload": {
     "type": "persona",
     "promptFile": "prompt.md"

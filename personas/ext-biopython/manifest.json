@@ -35,7 +35,7 @@
   "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
   "sourceSkillName": "biopython",
   "createdAt": "2026-03-09T03:47:17.797Z",
-  "updatedAt": "2026-03-09T20:03:02.315Z",
+  "updatedAt": "2026-03-17T04:48:13.433Z",
   "payload": {
     "type": "persona",
     "promptFile": "prompt.md"

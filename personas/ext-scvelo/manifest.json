@@ -31,7 +31,7 @@
   "sourceRepo": "https://github.com/K-Dense-AI/claude-scientific-skills",
   "sourceSkillName": "scvelo",
   "createdAt": "2026-03-09T03:47:17.833Z",
-  "updatedAt": "2026-03-09T20:03:02.623Z",
+  "updatedAt": "2026-03-17T04:48:13.655Z",
   "payload": {
     "type": "persona",
     "promptFile": "prompt.md"
