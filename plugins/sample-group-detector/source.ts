@@ -56,6 +56,13 @@ const BIO_MAP: Record<string, Array<[string, string]>> = {
     ['thymus', 'Thymus'], ['pancreas', 'Pancreas'], ['intestine', 'Intestine'],
     ['retina', 'Retina'], ['testis', 'Testis'], ['ovary', 'Ovary'],
   ],
+  timepoint: [
+    // Timepoint tokens are detected via regex, not vocabulary lookup.
+    // This entry exists so labeling can assign "timepoint" as a category.
+  ],
+  dosage: [
+    // Dosage tokens are detected via regex, not vocabulary lookup.
+  ],
 };
 
 /** Flat lookup: token -> [category, expansion] for fast matching. */
@@ -104,11 +111,50 @@ const DOSAGE_PATTERNS = [
   /^dose(\d+)$/i,
 ];
 
-function classifyNumericToken(token: string): 'timepoint' | 'dosage' | 'replicate' | null {
-  if (TIMEPOINT_PATTERNS.some(p => p.test(token))) return 'timepoint';
-  if (DOSAGE_PATTERNS.some(p => p.test(token))) return 'dosage';
-  if (isReplicateToken(token)) return 'replicate';
-  return null;
+function isTimepointToken(token: string): boolean {
+  return TIMEPOINT_PATTERNS.some(p => p.test(token));
+}
+
+function isDosageToken(token: string): boolean {
+  return DOSAGE_PATTERNS.some(p => p.test(token));
+}
+
+// ─── Replicate detection ─────────────────────────────────────────────────
+
+/**
+ * Check if a single token matches a replicate pattern.
+ * Matches: rep1, r1, R1, Rep1, 1, 01, 001, etc.
+ */
+function isReplicateToken(token: string): boolean {
+  return /^(rep|r|Rep|R)\d+$/.test(token) || /^\d+$/.test(token);
+}
+
+/**
+ * Check if ALL values in a column match replicate patterns.
+ * This is the strict dataset-level check.
+ */
+function isReplicateColumn(values: string[]): boolean {
+  if (values.length === 0) return false;
+  return values.every(v => isReplicateToken(v));
+}
+
+/**
+ * Check if values look sequential/numeric (characteristic of replicates).
+ * Returns true if values are sequential integers or rep-prefixed sequential integers.
+ */
+function areValuesSequentialOrNumeric(values: string[]): boolean {
+  // Extract numeric parts
+  const nums = values.map(v => {
+    const m = v.match(/^(?:rep|r|Rep|R)?(\d+)$/);
+    return m ? parseInt(m[1], 10) : NaN;
+  });
+  if (nums.some(isNaN)) return false;
+  // Check if they form a reasonable range (not all the same, max - min < count * 3)
+  const unique = [...new Set(nums)];
+  if (unique.length <= 1) return false;
+  const min = Math.min(...unique);
+  const max = Math.max(...unique);
+  return max - min < unique.length * 3;
 }
 
 // ─── Gene symbol patterns ─────────────────────────────────────────────────
@@ -136,32 +182,45 @@ const METADATA_NAMES = new Set([
   'coldata.txt', 'samplesheet.txt', 'sample_metadata.txt',
 ]);
 
-function isReplicateToken(token: string): boolean {
-  return /^(rep|r|Rep|R)?[0-9]+$/.test(token);
-}
-
 // ─── Detection result types ──────────────────────────────────────────────
 
-interface DetectedGroup {
-  index?: number;
-  label: string;
+interface ColumnLabel {
+  position: number;
   category: string;
+  label: string;
   values: string[];
+  expansion?: string[];
+}
+
+interface GroupingCandidate {
+  /** Column indices that form the group (0-based) */
+  groupColumns: number[];
+  /** Column indices identified as replicates (0-based) */
+  replicateColumns: number[];
+  /** Column indices identified as noise (0-based) */
+  noiseColumns: number[];
+  /** Inferred group labels per sample */
+  groups: string[];
+  /** Unique group labels */
+  uniqueGroups: string[];
+  /** Replicate values per sample */
+  replicates: string[];
+  /** Confidence score */
   confidence: 'high' | 'medium' | 'low';
-  expansions?: string[];
-  method: string;
+  /** Scoring breakdown */
+  score: number;
 }
 
 interface FileResult {
-  separator?: string;
-  groups: DetectedGroup[];
+  separator: string;
+  grouping: GroupingCandidate;
+  columnLabels: ColumnLabel[];
   sampleCount: number;
   sampleExamples: string[];
   noiseTokens?: string[];
   factorialStructure?: string;
+  timepointDetected?: { position: number; values: string[] };
 }
-
-// ─── Main execute function ──────────────────────────────────────────────
 
 // ─── Metadata file inspector ──────────────────────────────────────────────
 
@@ -263,6 +322,8 @@ function inspectMetadataFile(filePath: string, fileName: string, language: 'pyth
   }
 }
 
+// ─── Main execute function ──────────────────────────────────────────────
+
 export async function execute(params: PluginParams): Promise<PluginResult> {
   // Check if a metadata file is already attached — inspect it to identify group columns
   const metaFileName = params.fileNames.find(f => METADATA_NAMES.has(f.toLowerCase()));
@@ -303,7 +364,7 @@ export async function execute(params: PluginParams): Promise<PluginResult> {
     if (sampleNames.length < 2) continue;
 
     const result = analyzeSampleNames(sampleNames, params.language);
-    if (result && result.groups.length > 0) {
+    if (result && result.grouping.uniqueGroups.length > 0) {
       reports.push(formatReport(fileName, result, params.language));
       metadata[fileName] = result;
     }
@@ -313,12 +374,11 @@ export async function execute(params: PluginParams): Promise<PluginResult> {
     return { contextText: '', metadata };
   }
 
-  // Check if multiple non-replicate groups were detected across files
-  const allGroups = Object.values(metadata as Record<string, FileResult>)
-    .flatMap(r => r.groups)
-    .filter(g => g.category !== 'unknown' || g.values.length >= 2);
-  const namedGroupCount = allGroups.filter(g =>
-    g.category !== 'unknown' && g.category !== 'timepoint' && g.category !== 'dosage',
+  // Check if multiple non-replicate group variables were detected
+  const allResults = Object.values(metadata) as FileResult[];
+  const allLabels = allResults.flatMap(r => r.columnLabels);
+  const namedGroupCount = allLabels.filter(l =>
+    l.category !== 'replicate' && l.category !== 'noise' && l.category !== 'unknown',
   ).length;
 
   const mergeAdvice = namedGroupCount >= 2
@@ -344,280 +404,454 @@ export async function execute(params: PluginParams): Promise<PluginResult> {
   return { contextText, metadata };
 }
 
-// ─── Core analysis engine ──────────────────────────────────────────────
+// ─── Core analysis engine (dataset-level inference) ────────────────────────
 
 function analyzeSampleNames(sampleNames: string[], _language: 'python' | 'r'): FileResult | null {
-  const separators = ['.', '_', '-'];
-  let bestSep = '';
-  let bestScore = 0;
-  for (const sep of separators) {
-    const score = sampleNames.filter(s => s.includes(sep)).length / sampleNames.length;
-    if (score > bestScore) {
-      bestScore = score;
-      bestSep = sep;
-    }
-  }
-
-  if (bestScore < 0.5 || !bestSep) {
+  // Step 1: Detect dominant separator
+  const separator = detectDominantSeparator(sampleNames);
+  if (!separator) {
     return analyzeWholeNames(sampleNames);
   }
 
-  const parts = sampleNames.map(s => s.split(bestSep));
-  const maxParts = Math.max(...parts.map(p => p.length));
-  const partMatrix = parts.map(p => {
-    const padded = [...p];
-    while (padded.length < maxParts) padded.push('');
+  // Step 2: Tokenize all names, build token matrix
+  const tokenized = sampleNames.map(s => s.split(separator));
+  const maxTokens = Math.max(...tokenized.map(t => t.length));
+
+  // Pad shorter arrays to build a uniform matrix
+  const matrix: string[][] = tokenized.map(tokens => {
+    const padded = [...tokens];
+    while (padded.length < maxTokens) padded.push('');
     return padded;
   });
 
-  const detectedGroups: DetectedGroup[] = [];
-  const usedIndices = new Set<number>();
+  // Step 3: Identify replicate columns (dataset-level)
+  const replicateColumns = detectReplicateColumns(matrix, sampleNames.length);
+
+  // Step 4: Identify noise columns
+  const noiseColumns = detectNoiseColumns(matrix);
+
+  // Step 5: Remaining columns form the group
+  const allColumns = Array.from({ length: maxTokens }, (_, i) => i);
+  const groupColumns = allColumns.filter(
+    c => !replicateColumns.includes(c) && !noiseColumns.includes(c),
+  );
+
+  // Build group labels by joining non-replicate, non-noise tokens
+  const groups = matrix.map(row =>
+    groupColumns.map(c => row[c]).filter(v => v !== '').join(separator),
+  );
+  const uniqueGroups = [...new Set(groups)];
+  const replicates = matrix.map(row =>
+    replicateColumns.map(c => row[c]).filter(v => v !== '').join(separator),
+  );
+
+  // Step 6: Candidate scoring
+  const candidate = scoreCandidate(
+    groupColumns, replicateColumns, noiseColumns,
+    groups, uniqueGroups, replicates, sampleNames.length,
+  );
+
+  // If ambiguous, try alternative candidates
+  const bestCandidate = resolveAmbiguity(candidate, matrix, separator, sampleNames.length);
+
+  // Step 7: Vocabulary labeling (cosmetic enrichment)
+  const columnLabels = labelColumns(matrix, separator);
+
+  // Detect timepoint columns
+  let timepointDetected: { position: number; values: string[] } | undefined;
+  for (const label of columnLabels) {
+    if (label.category === 'timepoint') {
+      timepointDetected = { position: label.position, values: label.values };
+      break;
+    }
+  }
+
+  // Collect noise tokens
   const noiseTokens: string[] = [];
-
-  // Noise Filtering
-  for (let col = 0; col < maxParts; col++) {
-    const colValues = partMatrix.map(row => row[col]).filter(v => v !== '');
-    if (colValues.length > 0 && colValues.every(isNoiseToken)) {
-      noiseTokens.push(...[...new Set(colValues)]);
-      usedIndices.add(col);
-    }
+  for (const col of bestCandidate.noiseColumns) {
+    const colVals = matrix.map(row => row[col]).filter(v => v !== '');
+    noiseTokens.push(...[...new Set(colVals)]);
   }
 
-  // Pass 1: Controlled Vocabulary Matching
-  // Two thresholds: ≥50% match → high/medium confidence (strict),
-  // ≥1 match with remaining tokens as bio identifiers → medium/low (lenient).
-  // Lenient match catches e.g. genotype positions with gene names like [dbl, J1c, J2c, wt]
-  // where only "wt" is in the vocabulary but the position clearly represents genotype.
-  for (let col = 0; col < maxParts; col++) {
-    if (usedIndices.has(col)) continue;
-    const colValues = partMatrix.map(row => row[col].toLowerCase());
-    const uniqueValues = [...new Set(colValues)].filter(v => v !== '');
-    if (uniqueValues.length === 0) continue;
-
-    for (const [category, pairs] of Object.entries(BIO_MAP)) {
-      const knownTokens = pairs.map(p => p[0]);
-      const matchCount = uniqueValues.filter(v => knownTokens.includes(v)).length;
-      if (matchCount > 0 && matchCount >= uniqueValues.length * 0.5) {
-        // Strict match: ≥50% tokens recognized
-        const expansions = uniqueValues.map(v => {
-          const entry = TOKEN_LOOKUP.get(v);
-          return entry ? entry[1] : v;
-        });
-        detectedGroups.push({
-          index: col, label: category, category, values: uniqueValues,
-          confidence: matchCount === uniqueValues.length ? 'high' : 'medium',
-          expansions, method: 'vocabulary',
-        });
-        usedIndices.add(col);
-        break;
-      } else if (
-        matchCount > 0 &&
-        uniqueValues.length >= 2 &&
-        uniqueValues.length <= 10 &&
-        // Remaining unmatched tokens must look like biological identifiers
-        // (alphanumeric, 2+ chars, not pure replicates or noise)
-        uniqueValues
-          .filter(v => !knownTokens.includes(v))
-          .every(v => /^[a-zA-Z][a-zA-Z0-9]{1,}$/.test(v) && !isReplicateToken(v) && !isNoiseToken(v))
-      ) {
-        // Lenient match: at least one known token + remaining look like bio IDs (e.g. gene names)
-        const expansions = uniqueValues.map(v => {
-          const entry = TOKEN_LOOKUP.get(v);
-          return entry ? entry[1] : v;
-        });
-        detectedGroups.push({
-          index: col, label: category, category, values: uniqueValues,
-          confidence: 'low',
-          expansions, method: 'vocabulary-partial',
-        });
-        usedIndices.add(col);
-        break;
-      }
-    }
-  }
-
-  // Pass 2: Timepoint + Numeric Pattern Recognition
-  for (let col = 0; col < maxParts; col++) {
-    if (usedIndices.has(col)) continue;
-    const colValues = partMatrix.map(row => row[col]).filter(v => v !== '');
-    const uniqueValues = [...new Set(colValues)];
-    if (uniqueValues.length === 0) continue;
-
-    const classifications = uniqueValues.map(classifyNumericToken);
-    const timepointCount = classifications.filter(c => c === 'timepoint').length;
-    const dosageCount = classifications.filter(c => c === 'dosage').length;
-    const replicateCount = classifications.filter(c => c === 'replicate').length;
-
-    if (timepointCount > 0 && timepointCount >= uniqueValues.length * 0.5) {
-      detectedGroups.push({
-        index: col, label: 'timepoint', category: 'timepoint', values: uniqueValues,
-        confidence: timepointCount === uniqueValues.length ? 'high' : 'medium',
-        method: 'pattern',
-      });
-      usedIndices.add(col);
-    } else if (dosageCount > 0 && dosageCount >= uniqueValues.length * 0.5) {
-      detectedGroups.push({
-        index: col, label: 'dosage', category: 'dosage', values: uniqueValues,
-        confidence: dosageCount === uniqueValues.length ? 'high' : 'medium',
-        method: 'pattern',
-      });
-      usedIndices.add(col);
-    } else if (replicateCount === uniqueValues.length) {
-      usedIndices.add(col);
-    }
-  }
-
-  // Pass 3: Gene Symbol + Modification Patterns
-  for (let col = 0; col < maxParts; col++) {
-    if (usedIndices.has(col)) continue;
-    const colValues = partMatrix.map(row => row[col]).filter(v => v !== '');
-    const uniqueValues = [...new Set(colValues)];
-    if (uniqueValues.length === 0) continue;
-
-    const geneModifications = uniqueValues.map(parseGeneModification).filter(Boolean);
-    if (geneModifications.length > 0 && geneModifications.length >= uniqueValues.length * 0.5) {
-      const expansions = uniqueValues.map(v => {
-        const parsed = parseGeneModification(v);
-        return parsed ? `${parsed[0]}-${parsed[1]}` : v;
-      });
-      detectedGroups.push({
-        index: col, label: 'genotype', category: 'genotype', values: uniqueValues,
-        confidence: 'medium', expansions, method: 'gene-symbol',
-      });
-      usedIndices.add(col);
-    }
-  }
-
-  // Pass 4: Differential Token Analysis + Frequency Clustering
-  for (let col = 0; col < maxParts; col++) {
-    if (usedIndices.has(col)) continue;
-    const colValues = partMatrix.map(row => row[col]).filter(v => v !== '');
-    const uniqueValues = [...new Set(colValues)];
-
-    if (uniqueValues.length <= 1) continue;
-    if (uniqueValues.length >= sampleNames.length * 0.9) continue;
-    if (uniqueValues.every(isReplicateToken)) continue;
-    if (uniqueValues.every(isNoiseToken)) continue;
-
-    const freq = new Map<string, number>();
-    for (const v of colValues) {
-      freq.set(v, (freq.get(v) ?? 0) + 1);
-    }
-    const freqValues = [...freq.values()];
-    const isBalanced = freqValues.length >= 2 &&
-      Math.max(...freqValues) / Math.min(...freqValues) <= 3;
-
-    let confidence: 'high' | 'medium' | 'low' = 'low';
-    if (isBalanced && uniqueValues.length >= 2 && uniqueValues.length <= 6) {
-      confidence = 'medium';
-    }
-
-    const looksLikeCondition = uniqueValues.some(v =>
-      /^[a-zA-Z]{2,}[0-9]*$/.test(v) && !isReplicateToken(v),
-    );
-    if (looksLikeCondition) {
-      confidence = confidence === 'low' ? 'medium' : confidence;
-    }
-
-    detectedGroups.push({
-      index: col, label: `group_${col + 1}`, category: 'unknown',
-      values: uniqueValues, confidence, method: 'frequency',
-    });
-  }
-
-  if (detectedGroups.length === 0) return null;
-
-  const factorialStructure = validateFactorialStructure(detectedGroups, partMatrix);
+  // Factorial structure
+  const factorialStructure = computeFactorialStructure(
+    columnLabels.filter(l =>
+      bestCandidate.groupColumns.includes(l.position) &&
+      l.category !== 'unknown' && l.category !== 'noise',
+    ),
+    matrix,
+  );
 
   return {
-    separator: bestSep,
-    groups: detectedGroups,
+    separator,
+    grouping: bestCandidate,
+    columnLabels,
     sampleCount: sampleNames.length,
     sampleExamples: sampleNames.slice(0, 4),
     noiseTokens: noiseTokens.length > 0 ? noiseTokens : undefined,
     factorialStructure,
+    timepointDetected,
   };
 }
 
-// ─── Whole-name analysis (no separator) ──────────────────────────────────
+// ─── Step 1: Separator detection ──────────────────────────────────────────
 
-function analyzeWholeNames(sampleNames: string[]): FileResult | null {
-  const lower = sampleNames.map(s => s.toLowerCase());
-  const groups: DetectedGroup[] = [];
+function detectDominantSeparator(sampleNames: string[]): string | null {
+  const separators = ['.', '_', '-'];
+  const counts: Record<string, number> = {};
 
-  for (const [category, pairs] of Object.entries(BIO_MAP)) {
-    const knownTokens = pairs.map(p => p[0]);
-    const matchingValues = [...new Set(lower)].filter(v =>
-      knownTokens.some(t => v.includes(t)),
-    );
-    if (matchingValues.length >= 2) {
-      const expansions = matchingValues.map(v => {
-        for (const [token, expansion] of pairs) {
-          if (v.includes(token)) return expansion;
-        }
-        return v;
-      });
-      groups.push({
-        label: category, category, values: matchingValues,
-        confidence: 'medium', expansions, method: 'vocabulary-substring',
-      });
+  for (const sep of separators) {
+    counts[sep] = 0;
+    for (const name of sampleNames) {
+      // Count how many names contain this separator
+      if (name.includes(sep)) counts[sep]++;
     }
   }
 
-  const timepointMatches = [...new Set(lower)].filter(v =>
-    TIMEPOINT_PATTERNS.some(p => p.test(v)),
-  );
-  if (timepointMatches.length >= 2) {
-    groups.push({
-      label: 'timepoint', category: 'timepoint', values: timepointMatches,
-      confidence: 'high', method: 'pattern',
-    });
+  // Find the separator used in the most names
+  let bestSep = '';
+  let bestCount = 0;
+  for (const sep of separators) {
+    if (counts[sep] > bestCount) {
+      bestCount = counts[sep];
+      bestSep = sep;
+    }
   }
 
-  const geneMatches = sampleNames.filter(s => parseGeneModification(s) !== null);
-  if (geneMatches.length >= 2) {
-    const uniqueGene = [...new Set(geneMatches)];
-    groups.push({
-      label: 'genotype', category: 'genotype', values: uniqueGene,
-      confidence: 'medium',
-      expansions: uniqueGene.map(v => {
-        const parsed = parseGeneModification(v);
-        return parsed ? `${parsed[0]}-${parsed[1]}` : v;
-      }),
-      method: 'gene-symbol',
-    });
+  // Require at least 50% of samples to have the separator
+  const ratio = bestCount / sampleNames.length;
+  if (ratio < 0.5 || !bestSep) return null;
+
+  // Handle mixed separators: if a secondary separator is used in >20% of names,
+  // normalize those names by replacing the secondary with the dominant separator
+  // (This is handled during tokenization, not here — we just return the dominant one.)
+
+  return bestSep;
+}
+
+// ─── Step 3: Replicate column detection (dataset-level) ───────────────────
+
+function detectReplicateColumns(matrix: string[][], sampleCount: number): number[] {
+  const numCols = matrix[0].length;
+  const candidates: Array<{ col: number; score: number }> = [];
+
+  for (let col = 0; col < numCols; col++) {
+    const colValues = matrix.map(row => row[col]).filter(v => v !== '');
+    if (colValues.length === 0) continue;
+
+    // Check if ALL values match replicate patterns
+    if (!isReplicateColumn(colValues)) continue;
+
+    const unique = [...new Set(colValues)];
+    const cardinality = unique.length;
+
+    // Cardinality-to-sample-count ratio: replicates have high cardinality relative to
+    // the number of times each value repeats (each value appears few times = many groups use it)
+    // BUT also replicates typically have LOW cardinality relative to total samples
+    // (e.g., 3 replicates across 6 samples = cardinality 3, each appears 2 times)
+
+    // Key heuristic: replicate column has values that are sequential/numeric
+    const sequential = areValuesSequentialOrNumeric(unique);
+
+    // Score: prefer columns that look like replicates
+    let score = 0;
+    if (sequential) score += 10;
+    // Replicates typically have low-to-medium cardinality (2-10)
+    if (cardinality >= 2 && cardinality <= 10) score += 5;
+    // Each replicate value should appear roughly the same number of times
+    const freq = new Map<string, number>();
+    for (const v of colValues) freq.set(v, (freq.get(v) ?? 0) + 1);
+    const freqs = [...freq.values()];
+    const maxFreq = Math.max(...freqs);
+    const minFreq = Math.min(...freqs);
+    if (maxFreq > 0 && minFreq > 0 && maxFreq / minFreq <= 2) score += 3;
+    // Prefer last positions (replicates are usually at the end)
+    score += col * 0.5;
+
+    if (score > 0) {
+      candidates.push({ col, score });
+    }
   }
 
-  if (groups.length === 0) return null;
+  if (candidates.length === 0) return [];
+
+  // If only one candidate, use it
+  if (candidates.length === 1) return [candidates[0].col];
+
+  // If multiple candidates, pick the one with the highest score
+  // Typically there should be only one replicate column
+  candidates.sort((a, b) => b.score - a.score);
+  return [candidates[0].col];
+}
+
+// ─── Step 4: Noise column detection ───────────────────────────────────────
+
+function detectNoiseColumns(matrix: string[][]): number[] {
+  const numCols = matrix[0].length;
+  const noiseCols: number[] = [];
+
+  for (let col = 0; col < numCols; col++) {
+    const colValues = matrix.map(row => row[col]).filter(v => v !== '');
+    if (colValues.length > 0 && colValues.every(isNoiseToken)) {
+      noiseCols.push(col);
+    }
+  }
+
+  return noiseCols;
+}
+
+// ─── Step 6: Candidate scoring ────────────────────────────────────────────
+
+function scoreCandidate(
+  groupColumns: number[],
+  replicateColumns: number[],
+  noiseColumns: number[],
+  groups: string[],
+  uniqueGroups: string[],
+  replicates: string[],
+  sampleCount: number,
+): GroupingCandidate {
+  let score = 0;
+  let confidence: 'high' | 'medium' | 'low' = 'low';
+
+  // 1. No singletons (every group should appear more than once)
+  const groupFreq = new Map<string, number>();
+  for (const g of groups) groupFreq.set(g, (groupFreq.get(g) ?? 0) + 1);
+  const freqs = [...groupFreq.values()];
+  const singletonCount = freqs.filter(f => f === 1).length;
+  const hasSingletons = singletonCount > 0;
+
+  if (!hasSingletons) {
+    score += 20;
+  } else if (singletonCount <= uniqueGroups.length * 0.3) {
+    score += 10; // A few singletons are okay (incomplete design)
+  }
+
+  // 2. Balanced replicate counts
+  if (freqs.length > 0) {
+    const maxFreq = Math.max(...freqs);
+    const minFreq = Math.min(...freqs);
+    if (maxFreq > 0 && minFreq > 0) {
+      const ratio = maxFreq / minFreq;
+      if (ratio <= 1.5) score += 15;
+      else if (ratio <= 2.0) score += 10;
+      else if (ratio <= 3.0) score += 5;
+    }
+  }
+
+  // 3. Repeated groups (groups should appear multiple times if replicates exist)
+  if (replicateColumns.length > 0 && uniqueGroups.length < sampleCount) {
+    score += 10;
+  }
+
+  // 4. Reasonable number of groups
+  if (uniqueGroups.length >= 2 && uniqueGroups.length <= Math.ceil(sampleCount / 2)) {
+    score += 10;
+  }
+
+  // 5. Group columns exist
+  if (groupColumns.length > 0) {
+    score += 5;
+  }
+
+  // 6. Replicate columns detected
+  if (replicateColumns.length > 0) {
+    score += 5;
+  }
+
+  // Determine confidence
+  if (score >= 45 && !hasSingletons && replicateColumns.length > 0) {
+    confidence = 'high';
+  } else if (score >= 25) {
+    confidence = 'medium';
+  } else {
+    confidence = 'low';
+  }
+
   return {
+    groupColumns,
+    replicateColumns,
+    noiseColumns,
     groups,
-    sampleCount: sampleNames.length,
-    sampleExamples: sampleNames.slice(0, 4),
+    uniqueGroups,
+    replicates,
+    confidence,
+    score,
   };
 }
 
-// ─── Factorial Structure Validation ─────────────────────────────────────
+// ─── Ambiguity resolution ─────────────────────────────────────────────────
 
-function validateFactorialStructure(
-  groups: DetectedGroup[],
-  partMatrix: string[][],
+/**
+ * If the primary candidate is ambiguous, try alternative interpretations
+ * and return the best one.
+ */
+function resolveAmbiguity(
+  primary: GroupingCandidate,
+  matrix: string[][],
+  separator: string,
+  sampleCount: number,
+): GroupingCandidate {
+  // If primary is high confidence, no need to explore alternatives
+  if (primary.confidence === 'high') return primary;
+
+  const numCols = matrix[0].length;
+
+  // If no replicates were detected, try treating each column as a potential replicate
+  if (primary.replicateColumns.length === 0) {
+    let bestAlt: GroupingCandidate | null = null;
+
+    for (let col = 0; col < numCols; col++) {
+      if (primary.noiseColumns.includes(col)) continue;
+      const colValues = matrix.map(row => row[col]).filter(v => v !== '');
+      if (colValues.length === 0) continue;
+
+      // Try this column as replicate even if not all values match strict patterns
+      // (e.g., some datasets use arbitrary sample IDs)
+      const unique = [...new Set(colValues)];
+      if (unique.length < 2) continue;
+      if (unique.length >= sampleCount * 0.8) continue; // Too many unique = likely replicate
+
+      // Build alternative grouping
+      const altGroupCols = Array.from({ length: numCols }, (_, i) => i).filter(
+        c => c !== col && !primary.noiseColumns.includes(c),
+      );
+      const altGroups = matrix.map(row =>
+        altGroupCols.map(c => row[c]).filter(v => v !== '').join(separator),
+      );
+      const altUniqueGroups = [...new Set(altGroups)];
+      const altReplicates = matrix.map(row => row[col]);
+
+      const altCandidate = scoreCandidate(
+        altGroupCols, [col], primary.noiseColumns,
+        altGroups, altUniqueGroups, altReplicates, sampleCount,
+      );
+
+      if (!bestAlt || altCandidate.score > bestAlt.score) {
+        bestAlt = altCandidate;
+      }
+    }
+
+    if (bestAlt && bestAlt.score > primary.score) {
+      return bestAlt;
+    }
+  }
+
+  return primary;
+}
+
+// ─── Step 7: Vocabulary labeling (cosmetic enrichment) ────────────────────
+
+function labelColumns(matrix: string[][], _separator: string): ColumnLabel[] {
+  const numCols = matrix[0].length;
+  const labels: ColumnLabel[] = [];
+
+  for (let col = 0; col < numCols; col++) {
+    const colValues = matrix.map(row => row[col]).filter(v => v !== '');
+    const unique = [...new Set(colValues)];
+    if (unique.length === 0) continue;
+
+    // Check noise first
+    if (unique.every(isNoiseToken)) {
+      labels.push({ position: col, category: 'noise', label: 'noise', values: unique });
+      continue;
+    }
+
+    // Check if replicate column
+    if (isReplicateColumn(colValues) && areValuesSequentialOrNumeric(unique)) {
+      labels.push({ position: col, category: 'replicate', label: 'replicate', values: unique });
+      continue;
+    }
+
+    // Check timepoint patterns
+    if (unique.some(isTimepointToken) && unique.filter(isTimepointToken).length >= unique.length * 0.5) {
+      labels.push({ position: col, category: 'timepoint', label: 'timepoint', values: unique });
+      continue;
+    }
+
+    // Check dosage patterns
+    if (unique.some(isDosageToken) && unique.filter(isDosageToken).length >= unique.length * 0.5) {
+      labels.push({ position: col, category: 'dosage', label: 'dosage', values: unique });
+      continue;
+    }
+
+    // Check gene modification patterns
+    const geneMatches = unique.filter(v => parseGeneModification(v) !== null);
+    if (geneMatches.length > 0 && geneMatches.length >= unique.length * 0.5) {
+      const expansion = unique.map(v => {
+        const parsed = parseGeneModification(v);
+        return parsed ? `${parsed[0]}-${parsed[1]}` : v;
+      });
+      labels.push({ position: col, category: 'genotype', label: 'genotype', values: unique, expansion });
+      continue;
+    }
+
+    // Vocabulary matching (BIO_MAP)
+    let matched = false;
+    const lowerUnique = unique.map(v => v.toLowerCase());
+    for (const [category, pairs] of Object.entries(BIO_MAP)) {
+      if (pairs.length === 0) continue; // skip empty entries (timepoint, dosage)
+      const knownTokens = pairs.map(p => p[0]);
+      const matchCount = lowerUnique.filter(v => knownTokens.includes(v)).length;
+
+      if (matchCount > 0 && matchCount >= lowerUnique.length * 0.5) {
+        // Strict match
+        const expansion = lowerUnique.map(v => {
+          const entry = TOKEN_LOOKUP.get(v);
+          return entry ? entry[1] : v;
+        });
+        labels.push({ position: col, category, label: category, values: unique, expansion });
+        matched = true;
+        break;
+      } else if (
+        matchCount > 0 &&
+        lowerUnique.length >= 2 &&
+        lowerUnique.length <= 10 &&
+        lowerUnique
+          .filter(v => !knownTokens.includes(v))
+          .every(v => /^[a-zA-Z][a-zA-Z0-9]{1,}$/.test(v) && !isReplicateToken(v) && !isNoiseToken(v))
+      ) {
+        // Lenient match: at least one known token + remaining look biological
+        const expansion = lowerUnique.map(v => {
+          const entry = TOKEN_LOOKUP.get(v);
+          return entry ? entry[1] : v;
+        });
+        labels.push({ position: col, category, label: category, values: unique, expansion });
+        matched = true;
+        break;
+      }
+    }
+
+    if (!matched) {
+      // Unknown column — label as generic group
+      labels.push({ position: col, category: 'unknown', label: `position_${col + 1}`, values: unique });
+    }
+  }
+
+  return labels;
+}
+
+// ─── Factorial structure ──────────────────────────────────────────────────
+
+function computeFactorialStructure(
+  groupLabels: ColumnLabel[],
+  matrix: string[][],
 ): string | undefined {
-  const indexedGroups = groups.filter(g => g.index !== undefined);
-  if (indexedGroups.length < 2) return undefined;
+  if (groupLabels.length < 2) return undefined;
 
   const combinations = new Set<string>();
-  for (const row of partMatrix) {
-    const combo = indexedGroups.map(g => row[g.index!]).join(' \u00D7 ');
+  for (const row of matrix) {
+    const combo = groupLabels.map(g => row[g.position]).join(' \u00D7 ');
     combinations.add(combo);
   }
 
   let expectedCount = 1;
-  for (const g of indexedGroups) {
+  for (const g of groupLabels) {
     expectedCount *= g.values.length;
   }
 
   const observedCount = combinations.size;
-  const factorLabels = indexedGroups.map(g => `${g.label}(${g.values.length})`).join(' \u00D7 ');
+  const factorLabels = groupLabels.map(g => `${g.label}(${g.values.length})`).join(' \u00D7 ');
 
   if (observedCount === expectedCount) {
     return `Full factorial design: ${factorLabels} = ${expectedCount} combinations (all present)`;
@@ -628,6 +862,147 @@ function validateFactorialStructure(
   }
 }
 
+// ─── Whole-name analysis (no separator) ──────────────────────────────────
+
+function analyzeWholeNames(sampleNames: string[]): FileResult | null {
+  // Try to find a common prefix/suffix pattern
+  // e.g., control1, control2, treated1, treated2
+  const patterns = detectPrefixSuffixGroups(sampleNames);
+  if (patterns) return patterns;
+
+  // Fall back to vocabulary substring matching
+  const lower = sampleNames.map(s => s.toLowerCase());
+  const columnLabels: ColumnLabel[] = [];
+
+  for (const [category, pairs] of Object.entries(BIO_MAP)) {
+    if (pairs.length === 0) continue;
+    const knownTokens = pairs.map(p => p[0]);
+    const matchingValues = [...new Set(lower)].filter(v =>
+      knownTokens.some(t => v.includes(t)),
+    );
+    if (matchingValues.length >= 2) {
+      const expansion = matchingValues.map(v => {
+        for (const [token, exp] of pairs) {
+          if (v.includes(token)) return exp;
+        }
+        return v;
+      });
+      columnLabels.push({
+        position: 0, label: category, category, values: matchingValues, expansion,
+      });
+    }
+  }
+
+  // Gene modification patterns
+  const geneMatches = sampleNames.filter(s => parseGeneModification(s) !== null);
+  if (geneMatches.length >= 2) {
+    const uniqueGene = [...new Set(geneMatches)];
+    columnLabels.push({
+      position: 0, label: 'genotype', category: 'genotype', values: uniqueGene,
+      expansion: uniqueGene.map(v => {
+        const parsed = parseGeneModification(v);
+        return parsed ? `${parsed[0]}-${parsed[1]}` : v;
+      }),
+    });
+  }
+
+  if (columnLabels.length === 0) return null;
+
+  // Build a basic grouping from vocabulary matches
+  const groups = sampleNames.map(s => {
+    // Strip trailing digits to get group
+    const m = s.match(/^(.*?)(\d+)$/);
+    return m ? m[1] : s;
+  });
+  const uniqueGroups = [...new Set(groups)];
+
+  return {
+    separator: '',
+    grouping: {
+      groupColumns: [0],
+      replicateColumns: [],
+      noiseColumns: [],
+      groups,
+      uniqueGroups,
+      replicates: sampleNames.map(s => {
+        const m = s.match(/(\d+)$/);
+        return m ? m[1] : '';
+      }),
+      confidence: 'low',
+      score: 10,
+    },
+    columnLabels,
+    sampleCount: sampleNames.length,
+    sampleExamples: sampleNames.slice(0, 4),
+  };
+}
+
+/**
+ * Detect groups from names without separators by finding a common structure
+ * where a prefix varies and a numeric suffix acts as replicate.
+ * e.g., control1, control2, treated1, treated2
+ */
+function detectPrefixSuffixGroups(sampleNames: string[]): FileResult | null {
+  // Try splitting each name into alpha prefix + numeric suffix
+  const parsed = sampleNames.map(s => {
+    const m = s.match(/^(.*?)(\d+)$/);
+    if (!m) return null;
+    return { prefix: m[1], num: m[2], original: s };
+  });
+
+  // If not all names have this pattern, bail
+  if (parsed.some(p => p === null)) return null;
+  const valid = parsed as Array<{ prefix: string; num: string; original: string }>;
+
+  const prefixes = [...new Set(valid.map(p => p.prefix))];
+  const nums = [...new Set(valid.map(p => p.num))];
+
+  // Need at least 2 samples and some structure
+  if (prefixes.length < 1 || nums.length < 1) return null;
+  // If every name has a unique prefix, no grouping is possible
+  if (prefixes.length === valid.length) return null;
+
+  const groups = valid.map(p => p.prefix);
+  const uniqueGroups = [...new Set(groups)];
+  const replicates = valid.map(p => p.num);
+
+  const grouping = scoreCandidate(
+    [0], [1], [],
+    groups, uniqueGroups, replicates, sampleNames.length,
+  );
+
+  // Label the prefix using vocabulary
+  const columnLabels: ColumnLabel[] = [];
+  const lowerPrefixes = prefixes.map(p => p.toLowerCase());
+  let labeled = false;
+  for (const [category, pairs] of Object.entries(BIO_MAP)) {
+    if (pairs.length === 0) continue;
+    const knownTokens = pairs.map(p => p[0]);
+    const matchCount = lowerPrefixes.filter(v => knownTokens.includes(v)).length;
+    if (matchCount > 0) {
+      const expansion = lowerPrefixes.map(v => {
+        const entry = TOKEN_LOOKUP.get(v);
+        return entry ? entry[1] : v;
+      });
+      columnLabels.push({ position: 0, category, label: category, values: prefixes, expansion });
+      labeled = true;
+      break;
+    }
+  }
+  if (!labeled) {
+    columnLabels.push({ position: 0, category: 'unknown', label: 'group', values: prefixes });
+  }
+  columnLabels.push({ position: 1, category: 'replicate', label: 'replicate', values: nums });
+
+  return {
+    separator: '',
+    grouping,
+    columnLabels,
+    sampleCount: sampleNames.length,
+    sampleExamples: sampleNames.slice(0, 4),
+  };
+}
+
 // ─── Report formatting ──────────────────────────────────────────────────
 
 function formatReport(
@@ -636,72 +1011,89 @@ function formatReport(
   language: 'python' | 'r',
 ): string {
   const lines: string[] = [];
+  const { grouping, columnLabels, separator } = result;
+
   lines.push(`\nFile "${fileName}" \u2014 ${result.sampleCount} samples (e.g. ${result.sampleExamples.join(', ')})`);
 
-  if (result.separator) {
-    lines.push(`  Separator: "${result.separator}"`);
+  if (separator) {
+    lines.push(`  Separator: "${separator}"`);
   }
 
   if (result.noiseTokens && result.noiseTokens.length > 0) {
     lines.push(`  Noise tokens (ignored): ${result.noiseTokens.join(', ')}`);
   }
 
-  for (const g of result.groups) {
-    const posInfo = g.index !== undefined ? ` [position ${g.index + 1}]` : '';
-    const confIcon = g.confidence === 'high' ? '\u2713' : g.confidence === 'medium' ? '~' : '?';
-    const methodInfo = g.method !== 'vocabulary' ? ` (via ${g.method})` : '';
+  // Show detected group structure
+  lines.push(`  Groups detected: ${grouping.uniqueGroups.join(', ')} (${grouping.uniqueGroups.length} groups)`);
+  lines.push(`  Confidence: ${grouping.confidence}`);
 
-    if (g.expansions && g.expansions.length > 0) {
-      const expanded = g.values.map((v, i) => `${v} (${g.expansions![i]})`).join(', ');
-      lines.push(`  ${confIcon} ${g.label}: ${expanded}${posInfo}${methodInfo}`);
+  // Show replicate info
+  if (grouping.replicateColumns.length > 0) {
+    const repValues = [...new Set(grouping.replicates)].filter(v => v !== '');
+    lines.push(`  Replicate pattern: ${repValues.join(', ')} [position ${grouping.replicateColumns.map(c => c + 1).join(', ')}]`);
+  }
+
+  // Show column labels (vocabulary enrichment)
+  const meaningfulLabels = columnLabels.filter(l =>
+    l.category !== 'replicate' && l.category !== 'noise' && l.category !== 'unknown',
+  );
+  for (const label of meaningfulLabels) {
+    const posInfo = ` [position ${label.position + 1}]`;
+    if (label.expansion && label.expansion.length > 0) {
+      const expanded = label.values.map((v, i) => `${v} (${label.expansion![i]})`).join(', ');
+      lines.push(`  \u2713 ${label.label}: ${expanded}${posInfo}`);
     } else {
-      lines.push(`  ${confIcon} ${g.label}: ${g.values.join(', ')}${posInfo}${methodInfo}`);
+      lines.push(`  \u2713 ${label.label}: ${label.values.join(', ')}${posInfo}`);
     }
+  }
+
+  // Show example mapping
+  if (result.sampleExamples.length > 0) {
+    const example = result.sampleExamples[0];
+    const exampleIdx = 0;
+    const exampleGroup = grouping.groups[exampleIdx];
+    const exampleRep = grouping.replicates[exampleIdx];
+    lines.push(`  Example: "${example}" \u2192 group="${exampleGroup}", replicate="${exampleRep}"`);
+  }
+
+  if (result.timepointDetected) {
+    lines.push(`  Timepoint column detected [position ${result.timepointDetected.position + 1}]: ${result.timepointDetected.values.join(', ')}`);
   }
 
   if (result.factorialStructure) {
     lines.push(`  Design: ${result.factorialStructure}`);
   }
 
-  if (result.separator) {
-    const indexedGroups = result.groups.filter(g => g.index !== undefined);
-    const groupPositions = indexedGroups.map(g => g.index! + 1); // 1-based
+  // Generic extraction instructions (language-agnostic)
+  if (separator) {
+    const groupPositions = grouping.groupColumns.map(c => c + 1); // 1-based
+    const repPosition = grouping.replicateColumns.length > 0 ? grouping.replicateColumns[0] + 1 : undefined;
 
-    const slotMap = indexedGroups
-      .map(g => `position ${g.index! + 1} \u2192 ${g.label}`)
+    const slotMap = columnLabels
+      .filter(l => l.category !== 'noise')
+      .map(l => `position ${l.position + 1} = ${l.label}`)
       .join(', ');
     if (slotMap) {
-      lines.push(`  Slot mapping: ${slotMap} (replicate suffix excluded from group)`);
+      lines.push(`  Parsing rule: split each sample name on "${separator}" (literal character, not regex) → ${slotMap}`);
     }
 
-    // Generate concrete extraction code — explicit enough that Claude cannot misread the separator
-    if (groupPositions.length > 0) {
-      const exampleGroup = result.sampleExamples[0]
-        .split(result.separator)
-        .filter((_, i) => groupPositions.includes(i + 1))
-        .join(result.separator);
+    lines.push(`  Group = join tokens at position${groupPositions.length > 1 ? 's' : ''} ${groupPositions.join(', ')} with "${separator}"`);
+    if (repPosition) {
+      lines.push(`  Replicate = token at position ${repPosition}`);
+    }
 
-      if (language === 'r') {
-        const posStr = groupPositions.length === 1
-          ? String(groupPositions[0])
-          : `c(${groupPositions.join(', ')})`;
-        lines.push(`  Group extraction (R) — USE THIS EXACT PATTERN:`);
-        lines.push(`    parts <- strsplit(sample_names, "${result.separator}", fixed=TRUE)`);
-        lines.push(`    group <- sapply(parts, function(x) paste(x[${posStr}], collapse="${result.separator}"))`);
-        lines.push(`    # "${result.sampleExamples[0]}" → "${exampleGroup}"`);
-      } else {
-        const sep = result.separator;
-        const pyIndices = groupPositions.map(p => p - 1); // 0-based
-        const posStr = pyIndices.length === 1 ? String(pyIndices[0]) : `[${pyIndices.join(', ')}]`;
-        const sliceExpr = pyIndices.length === 1
-          ? `parts[${posStr}]`
-          : `[parts[i] for i in ${posStr}]`;
-        lines.push(`  Group extraction (Python) \u2014 USE THIS EXACT PATTERN:`);
-        lines.push(`    parts_list = [c.split('${sep}') for c in df.columns]`);
-        lines.push(`    group = ['${sep}'.join(${sliceExpr.replace('parts', 'p')}) for p in parts_list]`);
-        lines.push(`    # "${result.sampleExamples[0]}" \u2192 "${exampleGroup}"`);
+    // Show individual variable columns for multi-factor designs
+    const namedLabels = columnLabels.filter(l =>
+      l.category !== 'replicate' && l.category !== 'noise' && l.category !== 'unknown',
+    );
+    if (namedLabels.length >= 2) {
+      lines.push(`  Save each factor as a separate column in sample_metadata.csv:`);
+      for (const label of namedLabels) {
+        lines.push(`    ${label.label} = token at position ${label.position + 1}`);
       }
     }
+  } else {
+    lines.push(`  Parsing rule: strip trailing digits to get group, extract trailing digits as replicate`);
   }
 
   return lines.join('\n');

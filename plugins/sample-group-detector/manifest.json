@@ -1,9 +1,9 @@
 {
   "id": "sample-group-detector",
   "name": "Sample Group Detector",
-  "description": "Detects sample groups from column names when no metadata file is attached",
+  "description": "Detects sample groups from column names when no metadata file is attached — dataset-level inference with replicate stripping and candidate scoring",
   "type": "plugin",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "tags": [
     "data-cleaning",
     "preprocessing",
@@ -24,7 +24,7 @@
   "visibility": "builtin",
   "source": "platform",
   "createdAt": "2026-03-08T20:47:54.759Z",
-  "updatedAt": "2026-03-12T18:28:02.540Z",
+  "updatedAt": "2026-03-17T04:05:39.647Z",
   "payload": {
     "type": "plugin",
     "moduleRef": "@builtin/sample-group-detector",
