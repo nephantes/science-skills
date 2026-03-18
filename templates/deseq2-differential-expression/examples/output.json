@@ -2,16 +2,16 @@
   "skillId": "deseq2-differential-expression",
   "status": "completed",
   "stdout": "Significant genes (padj < 0.01): 20",
-  "stderr": "Loading required package: S4Vectors\nLoading required package: stats4\nLoading required package: BiocGenerics\nLoading required package: generics\n\nAttaching package: ‘generics’\n\nThe following object is masked from ‘package:dplyr’:\n\n    explain\n\nThe following objects are masked from ‘package:base’:\n\n    as.difftime, as.factor, as.ordered, intersect, is.element, setdiff,\n    setequal, union\n\n\nAttaching package: ‘BiocGenerics’\n\nThe following object is masked from ‘package:dplyr’:\n\n    combine\n\nThe following objects are masked from ‘package:stats’:\n\n    IQR, mad, sd, var, xtabs\n\nThe following objects are masked from ‘package:base’:\n\n    anyDuplicated, aperm, append, as.data.frame, basename, cbind,\n    colnames, dirname, do.call, duplicated, eval, evalq, Filter, Find,\n    get, grep, grepl, is.unsorted, lapply, Map, mapply, match, mget,\n    order, paste, pmax, pmax.int, pmin, pmin.int, Position, rank,\n    rbind, Reduce, rownames, sapply, saveRDS, table, tapply, unique,\n    unsplit, which.max, which.min\n\n\nAttaching package: ‘S4Vectors’\n\nThe following objects are masked from ‘package:dplyr’:\n\n    first, rename\n\nThe following object is masked from ‘package:utils’:\n\n    findMatches\n\nThe following objects are masked from ‘package:base’:\n\n    expand.grid, I, unname\n\nLoading required package: IRanges\n\nAttaching package: ‘IRanges’\n\nThe following objects are masked from ‘package:dplyr’:\n\n    collapse, desc, slice\n\nLoading required package: GenomicRanges\nLoading required package: Seqinfo\nLoading required package: SummarizedExperiment\nLoading required package: MatrixGenerics\nLoading required package: matrixStats\n\nAttaching package: ‘matrixStats’\n\nThe following object is masked from ‘package:dplyr’:\n\n    count\n\n\nAttaching package: ‘MatrixGenerics’\n\nThe following objects are masked from ‘package:matrixStats’:\n\n    colAlls, colAnyNAs, colAnys, colAvgsPerRowSet, colCollapse,\n    colCounts, colCummaxs, colCummins, colCumprods, colCumsums,\n    colDiffs, colIQRDiffs, colIQRs, colLogSumExps, colMadDiffs,\n    colMads, colMaxs, colMeans2, colMedians, colMins, colOrderStats,\n    colProds, colQuantiles, colRanges, colRanks, colSdDiffs, colSds,\n    colSums2, colTabulates, colVarDiffs, colVars, colWeightedMads,\n    colWeightedMeans, colWeightedMedians, colWeightedSds,\n    colWeightedVars, rowAlls, rowAnyNAs, rowAnys, rowAvgsPerColSet,\n    rowCollapse, rowCounts, rowCummaxs, rowCummins, rowCumprods,\n    rowCumsums, rowDiffs, rowIQRDiffs, rowIQRs, rowLogSumExps,\n    rowMadDiffs, rowMads, rowMaxs, rowMeans2, rowMedians, rowMins,\n    rowOrderStats, rowProds, rowQuantiles, rowRanges, rowRanks,\n    rowSdDiffs, rowSds, rowSums2, rowTabulates, rowVarDiffs, rowVars,\n    rowWeightedMads, rowWeightedMeans, rowWeightedMedians,\n    rowWeightedSds, rowWeightedVars\n\nLoading required package: Biobase\nWelcome to Bioconductor\n\n    Vignettes contain introductory material; view with\n    'browseVignettes()'. To cite Bioconductor, see\n    'citation(\"Biobase\")', and for packages 'citation(\"pkgname\")'.\n\n\nAttaching package: ‘Biobase’\n\nThe following object is masked from ‘package:MatrixGenerics’:\n\n    rowMedians\n\nThe following objects are masked from ‘package:matrixStats’:\n\n    anyMissing, rowMedians\n\nconverting counts to integer mode\nestimating size factors\nestimating dispersions\ngene-wise dispersion estimates\nmean-dispersion relationship\n-- note: fitType='parametric', but the dispersion trend was not well captured by the\n   function: y = a/x + b, and a local regression fit was automatically substituted.\n   specify fitType='local' or 'mean' to avoid this message next time.\nfinal dispersion estimates\nfitting model and testing\n",
+  "stderr": "converting counts to integer mode\nestimating size factors\nestimating dispersions\ngene-wise dispersion estimates\nmean-dispersion relationship\n-- note: fitType='parametric', but the dispersion trend was not well captured by the\n   function: y = a/x + b, and a local regression fit was automatically substituted.\n   specify fitType='local' or 'mean' to avoid this message next time.\nfinal dispersion estimates\nfitting model and testing\n",
   "exitCode": 0,
-  "durationMs": 8893,
+  "durationMs": 8159,
   "language": "r",
-  "generatedAt": "2026-03-09T01:49:09.795Z",
+  "generatedAt": "2026-03-18T13:36:52.780Z",
   "inputFiles": [
     {
       "name": "counts.csv",
       "description": "Raw count matrix (20 genes x 6 samples)",
-      "sizeBytes": 696
+      "sizeBytes": 690
     },
     {
       "name": "sample_metadata.csv",
@@ -23,7 +23,7 @@
     {
       "name": "de_results.csv",
       "ext": "csv",
-      "sizeBytes": 2457,
+      "sizeBytes": 2445,
       "mimeType": "text/csv"
     }
   ]
